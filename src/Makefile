@@ -799,19 +799,19 @@ setsserial-objs :=			  \
 
 obj-$(CONFIG_EMCEC) += emcec.o
 emcec-objs :=                             \
-    hal/drivers/ethercat/emcec.c          \
-    hal/drivers/ethercat/emcec_el1xxx.c   \
-    hal/drivers/ethercat/emcec_el2521.c   \
-    hal/drivers/ethercat/emcec_el2xxx.c   \
-    hal/drivers/ethercat/emcec_el31x2.c   \
-    hal/drivers/ethercat/emcec_el40x2.c   \
-    hal/drivers/ethercat/emcec_el41x2.c   \
-    hal/drivers/ethercat/emcec_el5151.c   \
-    hal/drivers/ethercat/emcec_el5152.c   \
-    hal/drivers/ethercat/emcec_el7342.c   \
-    hal/drivers/ethercat/emcec_el95xx.c   \
-    hal/drivers/ethercat/emcec_generic.c  \
-    hal/drivers/ethercat/emcec_stmds5k.c  \
+    hal/drivers/ethercat/emcec.o          \
+    hal/drivers/ethercat/emcec_el1xxx.o   \
+    hal/drivers/ethercat/emcec_el2521.o   \
+    hal/drivers/ethercat/emcec_el2xxx.o   \
+    hal/drivers/ethercat/emcec_el31x2.o   \
+    hal/drivers/ethercat/emcec_el40x2.o   \
+    hal/drivers/ethercat/emcec_el41x2.o   \
+    hal/drivers/ethercat/emcec_el5151.o   \
+    hal/drivers/ethercat/emcec_el5152.o   \
+    hal/drivers/ethercat/emcec_el7342.o   \
+    hal/drivers/ethercat/emcec_el95xx.o   \
+    hal/drivers/ethercat/emcec_generic.o  \
+    hal/drivers/ethercat/emcec_stmds5k.o  \
     $(MATHSTUB)
 
 obj-$(CONFIG_PROBE_PARPORT) += probe_parport.o
