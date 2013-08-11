@@ -368,8 +368,11 @@ AC_DEFINE_UNQUOTED([RTDIR], "$RTDIR", [Directory of the installed realtime syste
 # Subsection 3.1 - checking for a CC (we must use the same one used for RT)  #
 # Subsection 3.2 - check for the kernel version, with RT patches             #
 # Subsection 3.3 - check the moduledir where modules can get installed       #
-# Subsection 3.4 - check for GTK                                             #
-# Subsection 3.5 - check for utility programs needed to build and run EMC    #
+# Subsection 3.4 - define default dirs                                       #
+# Subsection 3.5 - check for GTK                                             #
+# Subsection 3.6 - check for utility programs needed to build and run EMC    #
+# Subsection 3.7 - check for programs needed to build documentation          #
+# Subsection 3.8 - check for additional realtime packages                    #
 ##############################################################################
 
 
@@ -976,6 +979,48 @@ fi
 AC_SUBST(BUILD_DOCS)
 AC_SUBST(BUILD_DOCS_PDF)
 AC_SUBST(BUILD_DOCS_HTML)
+
+##############################################################################
+# Subsection 3.8                                                             #
+# check for additional realtime packages to enable optional components       #
+# which depends on them                                                      #
+##############################################################################
+
+# check for ethercat dev files and enable ethercat hal driver
+AC_MSG_CHECKING([for ethercat master dev files])
+
+CONFIG_EMCEC=n
+EMCEC_SYMBOLS=""
+rm -f "${BUILD_TOPLEVEL}/src/hal/drivers/ethercat/ecrt.h"
+
+# ideal case: dev-package installed
+if test -e "$RTDIR/include/ecrt.h"; then
+    CONFIG_EMCEC=m
+else
+    # try to find ethercat include file somwhere else
+    for i in /usr/include/ecrt.h /usr/local/include/ecrt.h; do
+        if test -e $i; then
+            CONFIG_EMCEC=m
+            # hack to avoid adding /usr/include to the module build include path
+            ln -s $i "${BUILD_TOPLEVEL}/src/hal/drivers/ethercat/ecrt.h"
+            break
+        fi
+    done
+fi
+
+if test "$CONFIG_EMCEC" = "m"; then
+    # try to find symbol file
+    if test -e $MODULE_DIR/ethercat/Module.symvers; then
+        EMCEC_SYMBOLS=$MODULE_DIR/ethercat/Module.symvers
+    fi
+
+    AC_MSG_RESULT([found, hal driver enabled])
+else
+    AC_MSG_RESULT([not found, hal driver disabled])
+fi
+
+AC_SUBST(CONFIG_EMCEC)
+AC_SUBST(EMCEC_SYMBOLS)
 
 #############################################################################
 # Section 4 - Check for math support                                         #
