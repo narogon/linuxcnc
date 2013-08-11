@@ -17,18 +17,18 @@ BUILD PROCESS
 The build process was testet unter the official LinuxCNC distibution based on
 Ubuntu 10.04 "Lucid Lynx".
 
-1. Download the EtherCAT-Master source (V1.5.1) from
+1. Download the EtherCAT-Master source (V1.5.2) from
    IgH (http://www.etherlab.org/de/ethercat/index.php):
-   # wget http://www.etherlab.org/download/ethercat/ethercat-1.5.1.tar.bz2
+   # wget http://www.etherlab.org/download/ethercat/ethercat-1.5.2.tar.bz2
 
 2. Untar the archive
-   # tar xvfj ethercat-1.5.1.tar.bz2
+   # tar xvfj ethercat-1.5.2.tar.bz2
 
 3. copy the debian directory to your build directory.
-   # cp -av <source-path-of-LinuxCNC>/src/hal/drivers/ethercat/master/debian ethercat-1.5.1
+   # cp -av <source-path-of-LinuxCNC>/src/hal/drivers/ethercat/master/debian ethercat-1.5.2
 
 4. build the packages (very similar to the LinuxCNC build process)
-   # cd ethercat-1.5.1
+   # cd ethercat-1.5.2
    # cd debian
    # ./configure -a
    # cd ..
@@ -39,13 +39,13 @@ Ubuntu 10.04 "Lucid Lynx".
 INSTALLATION
 ------------
 
-Just do a 'sudo dpkg -i ethercat_1.5.1-1_i386.deb' to install the diver. After
+Just do a 'sudo dpkg -i ethercat_1.5.2-1_i386.deb' to install the diver. After
 the required config settings in /etc/default/ethercat (please take a look to
 the documentation) you should run 'sudo update-ethercat-config'. Then do a
 reboot or load the ec*-modules manually (see /etc/modules), the master should
 now be functional.
 
 To build the LinuxCNC EtherCAT HAL driver you also need to install the
-development package with 'sudo dpkg -i ethercat-dev_1.5.1-1_i386.deb'
+development package with 'sudo dpkg -i ethercat-dev_1.5.2-1_i386.deb'
 
 
