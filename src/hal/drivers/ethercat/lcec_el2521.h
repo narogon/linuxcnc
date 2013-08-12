@@ -15,24 +15,26 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
-#ifndef _EMCEC_EL40X2_H_
-#define _EMCEC_EL40X2_H_
+#ifndef _LCEC_EL2521_H_
+#define _LCEC_EL2521_H_
+
+// ****************************************************************************
+// CONFIG ISSUES:
+// - sign/amount representation (8000:04) must be FALSE (0x00, default)
+// - ramp function (8000:06) need to be active (0x01, default), can be disabled by hal pin
+// - direct input mode (8000:08) must be FALSE (0x00, default)
+// - travel distance control active (8000:0A) must be FALSE (0x00, default)
+// ****************************************************************************
 
 #include <linux/ctype.h>
-#include "emcec.h"
+#include "lcec.h"
 
-#define EMCEC_EL40x2_VID EMCEC_BECKHOFF_VID
+#define LCEC_EL2521_VID LCEC_BECKHOFF_VID
+#define LCEC_EL2521_PID 0x09d93052
 
-#define EMCEC_EL4002_PID 0x0fa23052
-#define EMCEC_EL4012_PID 0x0fac3052
-#define EMCEC_EL4022_PID 0x0fb63052
-#define EMCEC_EL4032_PID 0x0fc03052
+#define LCEC_EL2521_PDOS  4
 
-#define EMCEC_EL40x2_PDOS  2
-
-#define EMCEC_EL40x2_CHANS 2
-
-int emcec_el40x2_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
+int lcec_el2521_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
 
 #endif
 

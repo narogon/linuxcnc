@@ -23,44 +23,44 @@
 
 #include "hal.h"
 
-#include "emcec.h"
-#include "emcec_generic.h"
+#include "lcec.h"
+#include "lcec_generic.h"
 
-void emcec_generic_read(struct emcec_slave *slave, long period);
-void emcec_generic_write(struct emcec_slave *slave, long period);
+void lcec_generic_read(struct lcec_slave *slave, long period);
+void lcec_generic_write(struct lcec_slave *slave, long period);
 
-int emcec_generic_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
-  emcec_master_t *master = slave->master;
-  emcec_generic_pin_t *hal_data = (emcec_generic_pin_t *) slave->hal_data;
+int lcec_generic_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
+  lcec_master_t *master = slave->master;
+  lcec_generic_pin_t *hal_data = (lcec_generic_pin_t *) slave->hal_data;
   int i, j;
   int err;
 
   // initialize callbacks
-  slave->proc_read = emcec_generic_read;
-  slave->proc_write = emcec_generic_write;
+  slave->proc_read = lcec_generic_read;
+  slave->proc_write = lcec_generic_write;
 
   // initialize pins
   for (i=0; i < slave->pdo_entry_count; i++, hal_data++) {
     // PDO mapping
-    EMCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, hal_data->pdo_idx, hal_data->pdo_sidx, &hal_data->pdo_os, &hal_data->pdo_bp);
+    LCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, hal_data->pdo_idx, hal_data->pdo_sidx, &hal_data->pdo_os, &hal_data->pdo_bp);
 
     switch (hal_data->type) {
       case HAL_BIT:
         if (hal_data->pdo_len == 1) {
           // single bit pin
-          err = hal_pin_bit_newf(hal_data->dir, ((hal_bit_t **) &hal_data->pin[0]), comp_id, "%s.%s.%s.%s", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          err = hal_pin_bit_newf(hal_data->dir, ((hal_bit_t **) &hal_data->pin[0]), comp_id, "%s.%s.%s.%s", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
           if (err != 0) {
-            rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.%s failed\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+            rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.%s failed\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
             return err;
           }
 
           *((hal_bit_t *) hal_data->pin[0]) = 0;
         } else {
           // bit pin array
-          for (j=0; j < EMCEC_GENERIC_MAX_SUBPINS && j < hal_data->pdo_len; j++) {
-            err = hal_pin_bit_newf(hal_data->dir, ((hal_bit_t **) &hal_data->pin[j]), comp_id, "%s.%s.%s.%s-%d", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name, j);
+          for (j=0; j < LCEC_GENERIC_MAX_SUBPINS && j < hal_data->pdo_len; j++) {
+            err = hal_pin_bit_newf(hal_data->dir, ((hal_bit_t **) &hal_data->pin[j]), comp_id, "%s.%s.%s.%s-%d", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name, j);
             if (err != 0) {
-              rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.%s-%d failed\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name, j);
+              rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.%s-%d failed\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name, j);
               return err;
             }
 
@@ -72,20 +72,20 @@ int emcec_generic_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
       case HAL_S32:
         // check byte alignment
         if (hal_data->pdo_bp != 0) {
-          rtapi_print_msg(RTAPI_MSG_WARN, EMCEC_MSG_PFX "unable to export S32 pin %s.%s.%s.%s: process data not byte alligned!\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unable to export S32 pin %s.%s.%s.%s: process data not byte alligned!\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
           continue;
         }
 
         // check data size
         if (hal_data->pdo_len != 8 && hal_data->pdo_len != 16 && hal_data->pdo_len != 32) {
-          rtapi_print_msg(RTAPI_MSG_WARN, EMCEC_MSG_PFX "unable to export S32 pin %s.%s.%s.%s: invalid process data bitlen!\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unable to export S32 pin %s.%s.%s.%s: invalid process data bitlen!\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
           continue;
         }
 
         // export pin
-        err = hal_pin_s32_newf(hal_data->dir, ((hal_s32_t **) &hal_data->pin[0]), comp_id, "%s.%s.%s.%s", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+        err = hal_pin_s32_newf(hal_data->dir, ((hal_s32_t **) &hal_data->pin[0]), comp_id, "%s.%s.%s.%s", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
         if (err != 0) {
-          rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.%s failed\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.%s failed\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
           return err;
         }
 
@@ -96,20 +96,20 @@ int emcec_generic_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
       case HAL_U32:
         // check byte alignment
         if (hal_data->pdo_bp != 0) {
-          rtapi_print_msg(RTAPI_MSG_WARN, EMCEC_MSG_PFX "unable to export U32 pin %s.%s.%s.%s: process data not byte alligned!\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unable to export U32 pin %s.%s.%s.%s: process data not byte alligned!\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
           continue;
         }
 
         // check data size
         if (hal_data->pdo_len != 8 && hal_data->pdo_len != 16 && hal_data->pdo_len != 32) {
-          rtapi_print_msg(RTAPI_MSG_WARN, EMCEC_MSG_PFX "unable to export U32 pin %s.%s.%s.%s: invalid process data bitlen!\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unable to export U32 pin %s.%s.%s.%s: invalid process data bitlen!\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
           continue;
         }
 
         // export pin
-        err = hal_pin_u32_newf(hal_data->dir, ((hal_u32_t **) &hal_data->pin[0]), comp_id, "%s.%s.%s.%s", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+        err = hal_pin_u32_newf(hal_data->dir, ((hal_u32_t **) &hal_data->pin[0]), comp_id, "%s.%s.%s.%s", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
         if (err != 0) {
-          rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.%s failed\n", EMCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.%s failed\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
           return err;
         }
 
@@ -118,16 +118,16 @@ int emcec_generic_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
         break;
 
       default:
-          rtapi_print_msg(RTAPI_MSG_WARN, EMCEC_MSG_PFX "unsupported pin type %d!\n", hal_data->type);
+          rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unsupported pin type %d!\n", hal_data->type);
     }
   }
 
   return 0;
 }
 
-void emcec_generic_read(struct emcec_slave *slave, long period) {
-  emcec_master_t *master = slave->master;
-  emcec_generic_pin_t *hal_data = (emcec_generic_pin_t *) slave->hal_data;
+void lcec_generic_read(struct lcec_slave *slave, long period) {
+  lcec_master_t *master = slave->master;
+  lcec_generic_pin_t *hal_data = (lcec_generic_pin_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
   int i, j, offset;
   hal_u32_t *uval;
@@ -143,7 +143,7 @@ void emcec_generic_read(struct emcec_slave *slave, long period) {
     switch (hal_data->type) {
       case HAL_BIT:
         offset = hal_data->pdo_os << 3 | (hal_data->pdo_bp & 0x07);
-        for (j=0; j < EMCEC_GENERIC_MAX_SUBPINS && hal_data->pin[j] != NULL; j++, offset++) {
+        for (j=0; j < LCEC_GENERIC_MAX_SUBPINS && hal_data->pin[j] != NULL; j++, offset++) {
           *((hal_bit_t *) hal_data->pin[j]) = EC_READ_BIT(&pd[offset >> 3], offset & 0x07);
         }
         break;
@@ -188,9 +188,9 @@ void emcec_generic_read(struct emcec_slave *slave, long period) {
   }
 }
 
-void emcec_generic_write(struct emcec_slave *slave, long period) {
-  emcec_master_t *master = slave->master;
-  emcec_generic_pin_t *hal_data = (emcec_generic_pin_t *) slave->hal_data;
+void lcec_generic_write(struct lcec_slave *slave, long period) {
+  lcec_master_t *master = slave->master;
+  lcec_generic_pin_t *hal_data = (lcec_generic_pin_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
   int i, j, offset;
   hal_u32_t uval;
@@ -206,7 +206,7 @@ void emcec_generic_write(struct emcec_slave *slave, long period) {
     switch (hal_data->type) {
       case HAL_BIT:
         offset = hal_data->pdo_os << 3 | (hal_data->pdo_bp & 0x07);
-        for (j=0; j < EMCEC_GENERIC_MAX_SUBPINS && hal_data->pin[j] != NULL; j++, offset++) {
+        for (j=0; j < LCEC_GENERIC_MAX_SUBPINS && hal_data->pin[j] != NULL; j++, offset++) {
           EC_WRITE_BIT(&pd[offset >> 3], offset & 0x07, *((hal_bit_t *) hal_data->pin[j]));
         }
         break;

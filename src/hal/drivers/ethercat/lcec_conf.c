@@ -26,110 +26,110 @@
 #include "rtapi.h"
 #include "hal.h"
 
-#include "emcec_conf.h"
+#include "lcec_conf.h"
 
 #define BUFFSIZE 8192
 
 typedef struct {
   char *name;
-  EMCEC_SLAVE_TYPE_T type;
-} EMCEC_CONF_TYPELIST_T;
+  LCEC_SLAVE_TYPE_T type;
+} LCEC_CONF_TYPELIST_T;
 
 typedef struct {
   hal_u32_t *master_count;
   hal_u32_t *slave_count;
-} EMCEC_CONF_HAL_T;
+} LCEC_CONF_HAL_T;
 
-static const EMCEC_CONF_TYPELIST_T slaveTypes[] = {
+static const LCEC_CONF_TYPELIST_T slaveTypes[] = {
   // bus coupler
-  { "EK1100", emcecSlaveTypeEK1100 },
+  { "EK1100", lcecSlaveTypeEK1100 },
 
   // generic device
-  { "generic", emcecSlaveTypeGeneric },
+  { "generic", lcecSlaveTypeGeneric },
 
   // digital in
-  { "EL1002", emcecSlaveTypeEL1002 },
-  { "EL1004", emcecSlaveTypeEL1004 },
-  { "EL1008", emcecSlaveTypeEL1008 },
-  { "EL1012", emcecSlaveTypeEL1012 },
-  { "EL1014", emcecSlaveTypeEL1014 },
-  { "EL1018", emcecSlaveTypeEL1018 },
-  { "EL1024", emcecSlaveTypeEL1024 },
-  { "EL1034", emcecSlaveTypeEL1034 },
-  { "EL1084", emcecSlaveTypeEL1084 },
-  { "EL1088", emcecSlaveTypeEL1088 },
-  { "EL1094", emcecSlaveTypeEL1094 },
-  { "EL1098", emcecSlaveTypeEL1098 },
-  { "EL1104", emcecSlaveTypeEL1104 },
-  { "EL1114", emcecSlaveTypeEL1114 },
-  { "EL1124", emcecSlaveTypeEL1124 },
-  { "EL1134", emcecSlaveTypeEL1134 },
-  { "EL1144", emcecSlaveTypeEL1144 },
-  { "EL1808", emcecSlaveTypeEL1808 },
-  { "EL1809", emcecSlaveTypeEL1809 },
+  { "EL1002", lcecSlaveTypeEL1002 },
+  { "EL1004", lcecSlaveTypeEL1004 },
+  { "EL1008", lcecSlaveTypeEL1008 },
+  { "EL1012", lcecSlaveTypeEL1012 },
+  { "EL1014", lcecSlaveTypeEL1014 },
+  { "EL1018", lcecSlaveTypeEL1018 },
+  { "EL1024", lcecSlaveTypeEL1024 },
+  { "EL1034", lcecSlaveTypeEL1034 },
+  { "EL1084", lcecSlaveTypeEL1084 },
+  { "EL1088", lcecSlaveTypeEL1088 },
+  { "EL1094", lcecSlaveTypeEL1094 },
+  { "EL1098", lcecSlaveTypeEL1098 },
+  { "EL1104", lcecSlaveTypeEL1104 },
+  { "EL1114", lcecSlaveTypeEL1114 },
+  { "EL1124", lcecSlaveTypeEL1124 },
+  { "EL1134", lcecSlaveTypeEL1134 },
+  { "EL1144", lcecSlaveTypeEL1144 },
+  { "EL1808", lcecSlaveTypeEL1808 },
+  { "EL1809", lcecSlaveTypeEL1809 },
 
   // digital out
-  { "EL2002", emcecSlaveTypeEL2002 },
-  { "EL2004", emcecSlaveTypeEL2004 },
-  { "EL2008", emcecSlaveTypeEL2008 },
-  { "EL2022", emcecSlaveTypeEL2022 },
-  { "EL2024", emcecSlaveTypeEL2024 },
-  { "EL2032", emcecSlaveTypeEL2032 },
-  { "EL2034", emcecSlaveTypeEL2034 },
-  { "EL2042", emcecSlaveTypeEL2042 },
-  { "EL2084", emcecSlaveTypeEL2084 },
-  { "EL2088", emcecSlaveTypeEL2088 },
-  { "EL2124", emcecSlaveTypeEL2124 },
-  { "EL2808", emcecSlaveTypeEL2808 },
-  { "EL2809", emcecSlaveTypeEL2809 },
+  { "EL2002", lcecSlaveTypeEL2002 },
+  { "EL2004", lcecSlaveTypeEL2004 },
+  { "EL2008", lcecSlaveTypeEL2008 },
+  { "EL2022", lcecSlaveTypeEL2022 },
+  { "EL2024", lcecSlaveTypeEL2024 },
+  { "EL2032", lcecSlaveTypeEL2032 },
+  { "EL2034", lcecSlaveTypeEL2034 },
+  { "EL2042", lcecSlaveTypeEL2042 },
+  { "EL2084", lcecSlaveTypeEL2084 },
+  { "EL2088", lcecSlaveTypeEL2088 },
+  { "EL2124", lcecSlaveTypeEL2124 },
+  { "EL2808", lcecSlaveTypeEL2808 },
+  { "EL2809", lcecSlaveTypeEL2809 },
 
   // analog in, 2ch, 16 bits
-  { "EL3102", emcecSlaveTypeEL3102 },
-  { "EL3112", emcecSlaveTypeEL3112 },
-  { "EL3122", emcecSlaveTypeEL3122 },
-  { "EL3142", emcecSlaveTypeEL3142 },
-  { "EL3152", emcecSlaveTypeEL3152 },
-  { "EL3162", emcecSlaveTypeEL3162 },
+  { "EL3102", lcecSlaveTypeEL3102 },
+  { "EL3112", lcecSlaveTypeEL3112 },
+  { "EL3122", lcecSlaveTypeEL3122 },
+  { "EL3142", lcecSlaveTypeEL3142 },
+  { "EL3152", lcecSlaveTypeEL3152 },
+  { "EL3162", lcecSlaveTypeEL3162 },
 
   // analog out, 2ch, 12 bits
-  { "EL4002", emcecSlaveTypeEL4002 },
-  { "EL4012", emcecSlaveTypeEL4012 },
-  { "EL4022", emcecSlaveTypeEL4022 },
-  { "EL4032", emcecSlaveTypeEL4032 },
+  { "EL4002", lcecSlaveTypeEL4002 },
+  { "EL4012", lcecSlaveTypeEL4012 },
+  { "EL4022", lcecSlaveTypeEL4022 },
+  { "EL4032", lcecSlaveTypeEL4032 },
 
   // analog out, 2ch, 16 bits
-  { "EL4102", emcecSlaveTypeEL4102 },
-  { "EL4112", emcecSlaveTypeEL4112 },
-  { "EL4122", emcecSlaveTypeEL4122 },
-  { "EL4132", emcecSlaveTypeEL4132 },
+  { "EL4102", lcecSlaveTypeEL4102 },
+  { "EL4112", lcecSlaveTypeEL4112 },
+  { "EL4122", lcecSlaveTypeEL4122 },
+  { "EL4132", lcecSlaveTypeEL4132 },
 
   // encoder inputs
-  { "EL5101", emcecSlaveTypeEL5101 },
-  { "EL5151", emcecSlaveTypeEL5151 },
-  { "EL5152", emcecSlaveTypeEL5152 },
+  { "EL5101", lcecSlaveTypeEL5101 },
+  { "EL5151", lcecSlaveTypeEL5151 },
+  { "EL5152", lcecSlaveTypeEL5152 },
 
   // pulse train (stepper) output
-  { "EL2521", emcecSlaveTypeEL2521 },
+  { "EL2521", lcecSlaveTypeEL2521 },
 
   // dc servo
-  { "EL7342", emcecSlaveTypeEL7342 },
+  { "EL7342", lcecSlaveTypeEL7342 },
 
   // power suppply
-  { "EL9505", emcecSlaveTypeEL9505 },
-  { "EL9508", emcecSlaveTypeEL9508 },
-  { "EL9510", emcecSlaveTypeEL9510 },
-  { "EL9512", emcecSlaveTypeEL9512 },
-  { "EL9515", emcecSlaveTypeEL9515 },
+  { "EL9505", lcecSlaveTypeEL9505 },
+  { "EL9508", lcecSlaveTypeEL9508 },
+  { "EL9510", lcecSlaveTypeEL9510 },
+  { "EL9512", lcecSlaveTypeEL9512 },
+  { "EL9515", lcecSlaveTypeEL9515 },
 
   // stoeber MDS5000 series
-  { "StMDS5k", emcecSlaveTypeStMDS5k },
+  { "StMDS5k", lcecSlaveTypeStMDS5k },
 
   { NULL }
 };
 
-char *modname = "emcec_conf";
+char *modname = "lcec_conf";
 int hal_comp_id;
-EMCEC_CONF_HAL_T *conf_hal_data;
+LCEC_CONF_HAL_T *conf_hal_data;
 
 int exitEvent;
 
@@ -139,11 +139,11 @@ void *outputBuffer;
 size_t outputBufferLen;
 size_t outputBufferPos;
 
-EMCEC_CONF_MASTER_T *currMaster;
-EMCEC_CONF_SLAVE_T *currSlave;
-EMCEC_CONF_SYNCMANAGER_T *currSyncManager;
-EMCEC_CONF_PDO_T *currPdo;
-EMCEC_CONF_SDOCONF_T *currSdoConf;
+LCEC_CONF_MASTER_T *currMaster;
+LCEC_CONF_SLAVE_T *currSlave;
+LCEC_CONF_SYNCMANAGER_T *currSyncManager;
+LCEC_CONF_PDO_T *currPdo;
+LCEC_CONF_SDOCONF_T *currSdoConf;
 
 int shmem_id;
 
@@ -179,9 +179,9 @@ int main(int argc, char **argv) {
   int done;
   char buffer[BUFFSIZE];
   FILE *file;
-  EMCEC_CONF_NULL_T *end;
+  LCEC_CONF_NULL_T *end;
   void *shmem_ptr;
-  EMCEC_CONF_HEADER_T *header;
+  LCEC_CONF_HEADER_T *header;
   uint64_t u;
 
   // initialize component
@@ -192,19 +192,19 @@ int main(int argc, char **argv) {
   }
 
   // allocate hal memory
-  conf_hal_data = hal_malloc(sizeof(EMCEC_CONF_HAL_T));
+  conf_hal_data = hal_malloc(sizeof(LCEC_CONF_HAL_T));
   if (conf_hal_data == NULL) {
     fprintf(stderr, "%s: ERROR: unable to allocate HAL shared memory\n", modname);
     goto fail1;
   }
 
   // register pins
-  if (hal_pin_u32_newf(HAL_OUT, &(conf_hal_data->master_count), hal_comp_id, "%s.conf.master-count", EMCEC_MODULE_NAME) != 0) {
-    fprintf(stderr, "%s: ERROR: unable to register pin %s.conf.master-count\n", modname, EMCEC_MODULE_NAME);
+  if (hal_pin_u32_newf(HAL_OUT, &(conf_hal_data->master_count), hal_comp_id, "%s.conf.master-count", LCEC_MODULE_NAME) != 0) {
+    fprintf(stderr, "%s: ERROR: unable to register pin %s.conf.master-count\n", modname, LCEC_MODULE_NAME);
     goto fail1;
   }
-  if (hal_pin_u32_newf(HAL_OUT, &(conf_hal_data->slave_count), hal_comp_id, "%s.conf.slave-count", EMCEC_MODULE_NAME) != 0) {
-    fprintf(stderr, "%s: ERROR: unable to register pin %s.conf.slave-count\n", modname, EMCEC_MODULE_NAME);
+  if (hal_pin_u32_newf(HAL_OUT, &(conf_hal_data->slave_count), hal_comp_id, "%s.conf.slave-count", LCEC_MODULE_NAME) != 0) {
+    fprintf(stderr, "%s: ERROR: unable to register pin %s.conf.slave-count\n", modname, LCEC_MODULE_NAME);
     goto fail1;
   }
   *conf_hal_data->master_count = 0;
@@ -243,7 +243,7 @@ int main(int argc, char **argv) {
   // setup handlers
   XML_SetElementHandler(parser, xml_start_handler, xml_end_handler);
 
-  currConfType = emcecConfTypeNone;
+  currConfType = lcecConfTypeNone;
   outputBuffer = NULL;
   outputBufferLen = 0;
   outputBufferPos = 0;
@@ -273,14 +273,14 @@ int main(int argc, char **argv) {
   }
 
   // set end marker
-  end = getOutputBuffer(sizeof(EMCEC_CONF_NULL_T));
+  end = getOutputBuffer(sizeof(LCEC_CONF_NULL_T));
   if (end == NULL) {
       goto fail4;
   }
-  end->confType = emcecConfTypeNone;
+  end->confType = lcecConfTypeNone;
 
   // setup shared mem for config
-  shmem_id = rtapi_shmem_new(EMCEC_CONF_SHMEM_KEY, hal_comp_id, sizeof(EMCEC_CONF_HEADER_T) + outputBufferPos);
+  shmem_id = rtapi_shmem_new(LCEC_CONF_SHMEM_KEY, hal_comp_id, sizeof(LCEC_CONF_HEADER_T) + outputBufferPos);
   if ( shmem_id < 0 ) {
     fprintf(stderr, "%s: ERROR: couldn't allocate user/RT shared memory\n", modname);
     goto fail4;
@@ -292,8 +292,8 @@ int main(int argc, char **argv) {
   
   // setup header
   header = shmem_ptr;
-  shmem_ptr += sizeof(EMCEC_CONF_HEADER_T);
-  header->magic = EMCEC_CONF_SHMEM_MAGIC;
+  shmem_ptr += sizeof(LCEC_CONF_HEADER_T);
+  header->magic = LCEC_CONF_SHMEM_MAGIC;
   header->length = outputBufferPos;
 
   // copy data
@@ -331,59 +331,59 @@ fail0:
 
 void xml_start_handler(void *data, const char *el, const char **attr) {
   switch (currConfType) {
-    case emcecConfTypeNone:
+    case lcecConfTypeNone:
       if (strcmp(el, "master") == 0) {
-        currConfType = emcecConfTypeMaster;
+        currConfType = lcecConfTypeMaster;
         parseMasterAttrs(attr);
         return;
       }
       break;
-    case emcecConfTypeMaster:
+    case lcecConfTypeMaster:
       if (strcmp(el, "slave") == 0) {
-        currConfType = emcecConfTypeSlave;
+        currConfType = lcecConfTypeSlave;
         parseSlaveAttrs(attr);
         return;
       }
       break;
-    case emcecConfTypeSlave:
+    case lcecConfTypeSlave:
       if (strcmp(el, "dcConf") == 0) {
-        currConfType = emcecConfTypeDcConf;
+        currConfType = lcecConfTypeDcConf;
         parseDcConfAttrs(attr);
         return;
       }
       if (strcmp(el, "watchdog") == 0) {
-        currConfType = emcecConfTypeWatchdog;
+        currConfType = lcecConfTypeWatchdog;
         parseWatchdogAttrs(attr);
         return;
       }
       if (strcmp(el, "sdoConfig") == 0) {
-        currConfType = emcecConfTypeSdoConfig;
+        currConfType = lcecConfTypeSdoConfig;
         parseSdoConfigAttrs(attr);
         return;
       }
-      if (currSlave->type == emcecSlaveTypeGeneric && strcmp(el, "syncManager") == 0) {
-        currConfType = emcecConfTypeSyncManager;
+      if (currSlave->type == lcecSlaveTypeGeneric && strcmp(el, "syncManager") == 0) {
+        currConfType = lcecConfTypeSyncManager;
         parseSyncManagerAttrs(attr);
         return;
       }
       break;
-    case emcecConfTypeSdoConfig:
+    case lcecConfTypeSdoConfig:
       if (strcmp(el, "sdoDataRaw") == 0) {
-        currConfType = emcecConfTypeSdoDataRaw;
+        currConfType = lcecConfTypeSdoDataRaw;
         parseSdoDataRawAttrs(attr);
         return;
       }
       break;
-    case emcecConfTypeSyncManager:
+    case lcecConfTypeSyncManager:
       if (strcmp(el, "pdo") == 0) {
-        currConfType = emcecConfTypePdo;
+        currConfType = lcecConfTypePdo;
         parsePdoAttrs(attr);
         return;
       }
       break;
-    case emcecConfTypePdo:
+    case lcecConfTypePdo:
       if (strcmp(el, "pdoEntry") == 0) {
-        currConfType = emcecConfTypePdoEntry;
+        currConfType = lcecConfTypePdoEntry;
         parsePdoEntryAttrs(attr);
         return;
       }
@@ -396,57 +396,57 @@ void xml_start_handler(void *data, const char *el, const char **attr) {
 
 void xml_end_handler(void *data, const char *el) {
   switch (currConfType) {
-    case emcecConfTypeMaster:
+    case lcecConfTypeMaster:
       if (strcmp(el, "master") == 0) {
-        currConfType = emcecConfTypeNone;
+        currConfType = lcecConfTypeNone;
         return;
       }
       break;
-    case emcecConfTypeSlave:
+    case lcecConfTypeSlave:
       if (strcmp(el, "slave") == 0) {
-        currConfType = emcecConfTypeMaster;
+        currConfType = lcecConfTypeMaster;
         return;
       }
       break;
-    case emcecConfTypeDcConf:
+    case lcecConfTypeDcConf:
       if (strcmp(el, "dcConf") == 0) {
-        currConfType = emcecConfTypeSlave;
+        currConfType = lcecConfTypeSlave;
         return;
       }
       break;
-    case emcecConfTypeWatchdog:
+    case lcecConfTypeWatchdog:
       if (strcmp(el, "watchdog") == 0) {
-        currConfType = emcecConfTypeSlave;
+        currConfType = lcecConfTypeSlave;
         return;
       }
       break;
-    case emcecConfTypeSdoConfig:
+    case lcecConfTypeSdoConfig:
       if (strcmp(el, "sdoConfig") == 0) {
-        currConfType = emcecConfTypeSlave;
+        currConfType = lcecConfTypeSlave;
         return;
       }
       break;
-    case emcecConfTypeSdoDataRaw:
+    case lcecConfTypeSdoDataRaw:
       if (strcmp(el, "sdoDataRaw") == 0) {
-        currConfType = emcecConfTypeSdoConfig;
+        currConfType = lcecConfTypeSdoConfig;
         return;
       }
       break;
-    case emcecConfTypeSyncManager:
+    case lcecConfTypeSyncManager:
       if (strcmp(el, "syncManager") == 0) {
-        currConfType = emcecConfTypeSlave;
+        currConfType = lcecConfTypeSlave;
         return;
       }
       break;
-    case emcecConfTypePdo:
+    case lcecConfTypePdo:
       if (strcmp(el, "pdo") == 0) {
-        currConfType = emcecConfTypeSyncManager;
+        currConfType = lcecConfTypeSyncManager;
         return;
       }
       break;
-    case emcecConfTypePdoEntry:
+    case lcecConfTypePdoEntry:
       if (strcmp(el, "pdoEntry") == 0) {
-        currConfType = emcecConfTypePdo;
+        currConfType = lcecConfTypePdo;
         return;
       }
       break;
@@ -525,12 +525,12 @@ int parseHexdump(const char *str, uint8_t *buf) {
 }
 
 void parseMasterAttrs(const char **attr) {
-  EMCEC_CONF_MASTER_T *p = getOutputBuffer(sizeof(EMCEC_CONF_MASTER_T));
+  LCEC_CONF_MASTER_T *p = getOutputBuffer(sizeof(LCEC_CONF_MASTER_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypeMaster;
+  p->confType = lcecConfTypeMaster;
   while (*attr) {
     const char *name = *(attr++);
     const char *val = *(attr++);
@@ -543,8 +543,8 @@ void parseMasterAttrs(const char **attr) {
 
     // parse name
     if (strcmp(name, "name") == 0) {
-      strncpy(p->name, val, EMCEC_CONF_STR_MAXLEN);
-      p->name[EMCEC_CONF_STR_MAXLEN - 1] = 0;
+      strncpy(p->name, val, LCEC_CONF_STR_MAXLEN);
+      p->name[LCEC_CONF_STR_MAXLEN - 1] = 0;
       continue;
     }
 
@@ -568,7 +568,7 @@ void parseMasterAttrs(const char **attr) {
 
   // set default name
   if (p->name[0] == 0) {
-    snprintf(p->name, EMCEC_CONF_STR_MAXLEN, "%d", p->index);
+    snprintf(p->name, LCEC_CONF_STR_MAXLEN, "%d", p->index);
   }
 
   (*(conf_hal_data->master_count))++;
@@ -576,13 +576,13 @@ void parseMasterAttrs(const char **attr) {
 }
 
 void parseSlaveAttrs(const char **attr) {
-  EMCEC_CONF_SLAVE_T *p = getOutputBuffer(sizeof(EMCEC_CONF_SLAVE_T));
+  LCEC_CONF_SLAVE_T *p = getOutputBuffer(sizeof(LCEC_CONF_SLAVE_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypeSlave;
-  p->type = emcecSlaveTypeInvalid;
+  p->confType = lcecConfTypeSlave;
+  p->type = lcecSlaveTypeInvalid;
   while (*attr) {
     const char *name = *(attr++);
     const char *val = *(attr++);
@@ -595,7 +595,7 @@ void parseSlaveAttrs(const char **attr) {
 
     // parse slave type
     if (strcmp(name, "type") == 0) {
-      const EMCEC_CONF_TYPELIST_T *slaveType;
+      const LCEC_CONF_TYPELIST_T *slaveType;
       for (slaveType = slaveTypes; slaveType->name != NULL; slaveType++) {
         if (strcmp(val, slaveType->name) == 0) {
           break;
@@ -612,13 +612,13 @@ void parseSlaveAttrs(const char **attr) {
 
     // parse name
     if (strcmp(name, "name") == 0) {
-      strncpy(p->name, val, EMCEC_CONF_STR_MAXLEN);
-      p->name[EMCEC_CONF_STR_MAXLEN - 1] = 0;
+      strncpy(p->name, val, LCEC_CONF_STR_MAXLEN);
+      p->name[LCEC_CONF_STR_MAXLEN - 1] = 0;
       continue;
     }
 
     // generic only attributes
-    if (p->type == emcecSlaveTypeGeneric) {
+    if (p->type == lcecSlaveTypeGeneric) {
       // parse vid (hex value)
       if (strcmp(name, "vid") == 0) {
         p->vid = strtol(val, NULL, 16);
@@ -646,11 +646,11 @@ void parseSlaveAttrs(const char **attr) {
 
   // set default name
   if (p->name[0] == 0) {
-    snprintf(p->name, EMCEC_CONF_STR_MAXLEN, "%d", p->index);
+    snprintf(p->name, LCEC_CONF_STR_MAXLEN, "%d", p->index);
   }
 
   // type is required
-  if (p->type == emcecSlaveTypeInvalid) {
+  if (p->type == lcecSlaveTypeInvalid) {
     fprintf(stderr, "%s: ERROR: Slave has no type attribute\n", modname);
     XML_StopParser(parser, 0);
     return;
@@ -661,12 +661,12 @@ void parseSlaveAttrs(const char **attr) {
 }
 
 void parseDcConfAttrs(const char **attr) {
-  EMCEC_CONF_DC_T *p = getOutputBuffer(sizeof(EMCEC_CONF_DC_T));
+  LCEC_CONF_DC_T *p = getOutputBuffer(sizeof(LCEC_CONF_DC_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypeDcConf;
+  p->confType = lcecConfTypeDcConf;
   while (*attr) {
     const char *name = *(attr++);
     const char *val = *(attr++);
@@ -709,12 +709,12 @@ void parseDcConfAttrs(const char **attr) {
 }
 
 void parseWatchdogAttrs(const char **attr) {
-  EMCEC_CONF_WATCHDOG_T *p = getOutputBuffer(sizeof(EMCEC_CONF_WATCHDOG_T));
+  LCEC_CONF_WATCHDOG_T *p = getOutputBuffer(sizeof(LCEC_CONF_WATCHDOG_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypeWatchdog;
+  p->confType = lcecConfTypeWatchdog;
   while (*attr) {
     const char *name = *(attr++);
     const char *val = *(attr++);
@@ -740,12 +740,12 @@ void parseWatchdogAttrs(const char **attr) {
 
 void parseSdoConfigAttrs(const char **attr) {
   int tmp;
-  EMCEC_CONF_SDOCONF_T *p = getOutputBuffer(sizeof(EMCEC_CONF_SDOCONF_T));
+  LCEC_CONF_SDOCONF_T *p = getOutputBuffer(sizeof(LCEC_CONF_SDOCONF_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypeSdoConfig;
+  p->confType = lcecConfTypeSdoConfig;
   p->index = 0xffff;
   p->subindex = 0xff;
   while (*attr) {
@@ -767,7 +767,7 @@ void parseSdoConfigAttrs(const char **attr) {
     // parse subIdx
     if (strcmp(name, "subIdx") == 0) {
       if (strcasecmp(val, "complete") == 0) {
-        p->subindex = EMCEC_CONF_SDO_COMPLETE_SUBIDX;
+        p->subindex = LCEC_CONF_SDO_COMPLETE_SUBIDX;
         continue;
       }
       tmp = strtol(val, NULL, 16);
@@ -801,7 +801,7 @@ void parseSdoConfigAttrs(const char **attr) {
   }
 
   currSdoConf = p;
-  currSlave->sdoConfigLength += sizeof(EMCEC_CONF_SDOCONF_T);
+  currSlave->sdoConfigLength += sizeof(LCEC_CONF_SDOCONF_T);
 }
 
 void parseSdoDataRawAttrs(const char **attr) {
@@ -840,12 +840,12 @@ void parseSdoDataRawAttrs(const char **attr) {
 
 void parseSyncManagerAttrs(const char **attr) {
   int tmp;
-  EMCEC_CONF_SYNCMANAGER_T *p = getOutputBuffer(sizeof(EMCEC_CONF_SYNCMANAGER_T));
+  LCEC_CONF_SYNCMANAGER_T *p = getOutputBuffer(sizeof(LCEC_CONF_SYNCMANAGER_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypeSyncManager;
+  p->confType = lcecConfTypeSyncManager;
   p->index = 0xff;
   p->dir = EC_DIR_INVALID;
   while (*attr) {
@@ -905,12 +905,12 @@ void parseSyncManagerAttrs(const char **attr) {
 
 void parsePdoAttrs(const char **attr) {
   int tmp;
-  EMCEC_CONF_PDO_T *p = getOutputBuffer(sizeof(EMCEC_CONF_PDO_T));
+  LCEC_CONF_PDO_T *p = getOutputBuffer(sizeof(LCEC_CONF_PDO_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypePdo;
+  p->confType = lcecConfTypePdo;
   p->index = 0xffff;
   while (*attr) {
     const char *name = *(attr++);
@@ -948,12 +948,12 @@ void parsePdoAttrs(const char **attr) {
 
 void parsePdoEntryAttrs(const char **attr) {
   int tmp;
-  EMCEC_CONF_PDOENTRY_T *p = getOutputBuffer(sizeof(EMCEC_CONF_PDOENTRY_T));
+  LCEC_CONF_PDOENTRY_T *p = getOutputBuffer(sizeof(LCEC_CONF_PDOENTRY_T));
   if (p == NULL) {
     return;
   }
 
-  p->confType = emcecConfTypePdoEntry;
+  p->confType = lcecConfTypePdoEntry;
   p->index = 0xffff;
   p->subindex = 0xff;
   while (*attr) {
@@ -1017,8 +1017,8 @@ void parsePdoEntryAttrs(const char **attr) {
 
     // parse halPin
     if (strcmp(name, "halPin") == 0) {
-      strncpy(p->halPin, val, EMCEC_CONF_STR_MAXLEN);
-      p->halPin[EMCEC_CONF_STR_MAXLEN - 1] = 0;
+      strncpy(p->halPin, val, LCEC_CONF_STR_MAXLEN);
+      p->halPin[LCEC_CONF_STR_MAXLEN - 1] = 0;
       continue;
     }
 

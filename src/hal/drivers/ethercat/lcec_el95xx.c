@@ -23,8 +23,8 @@
 
 #include "hal.h"
 
-#include "emcec.h"
-#include "emcec_el95xx.h"
+#include "lcec.h"
+#include "lcec_el95xx.h"
 
 typedef struct {
   hal_bit_t *power_ok;
@@ -33,37 +33,37 @@ typedef struct {
   int power_ok_pdo_bp;
   int overload_pdo_os;
   int overload_pdo_bp;
-} emcec_el95xx_data_t;
+} lcec_el95xx_data_t;
 
-void emcec_el95xx_read(struct emcec_slave *slave, long period);
+void lcec_el95xx_read(struct lcec_slave *slave, long period);
 
-int emcec_el95xx_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
-  emcec_master_t *master = slave->master;
-  emcec_el95xx_data_t *hal_data;
+int lcec_el95xx_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
+  lcec_master_t *master = slave->master;
+  lcec_el95xx_data_t *hal_data;
   int err;
 
   // initialize callbacks
-  slave->proc_read = emcec_el95xx_read;
+  slave->proc_read = lcec_el95xx_read;
 
   // alloc hal memory
-  if ((hal_data = hal_malloc(sizeof(emcec_el95xx_data_t))) == NULL) {
-    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "hal_malloc() for slave %s.%s failed\n", master->name, slave->name);
+  if ((hal_data = hal_malloc(sizeof(lcec_el95xx_data_t))) == NULL) {
+    rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "hal_malloc() for slave %s.%s failed\n", master->name, slave->name);
     return -EIO;
   }
-  memset(hal_data, 0, sizeof(emcec_el95xx_data_t));
+  memset(hal_data, 0, sizeof(lcec_el95xx_data_t));
   slave->hal_data = hal_data;
 
   // initialize POD entries
-  EMCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, 0x6000, 0x01, &hal_data->power_ok_pdo_os, &hal_data->power_ok_pdo_bp);
-  EMCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, 0x6000, 0x02, &hal_data->overload_pdo_os, &hal_data->overload_pdo_bp);
+  LCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, 0x6000, 0x01, &hal_data->power_ok_pdo_os, &hal_data->power_ok_pdo_bp);
+  LCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, 0x6000, 0x02, &hal_data->overload_pdo_os, &hal_data->overload_pdo_bp);
 
   // export pins
-  if ((err = hal_pin_bit_newf(HAL_OUT, &(hal_data->power_ok), comp_id, "%s.%s.%s.power-ok", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
-    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.power-ok failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
+  if ((err = hal_pin_bit_newf(HAL_OUT, &(hal_data->power_ok), comp_id, "%s.%s.%s.power-ok", LCEC_MODULE_NAME, master->name, slave->name)) != 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.power-ok failed\n", LCEC_MODULE_NAME, master->name, slave->name);
     return err;
   }
-  if ((err = hal_pin_bit_newf(HAL_OUT, &(hal_data->overload), comp_id, "%s.%s.%s.overload", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
-    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.overload failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
+  if ((err = hal_pin_bit_newf(HAL_OUT, &(hal_data->overload), comp_id, "%s.%s.%s.overload", LCEC_MODULE_NAME, master->name, slave->name)) != 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.overload failed\n", LCEC_MODULE_NAME, master->name, slave->name);
     return err;
   }
 
@@ -74,9 +74,9 @@ int emcec_el95xx_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t
   return 0;
 }
 
-void emcec_el95xx_read(struct emcec_slave *slave, long period) {
-  emcec_master_t *master = slave->master;
-  emcec_el95xx_data_t *hal_data = (emcec_el95xx_data_t *) slave->hal_data;
+void lcec_el95xx_read(struct lcec_slave *slave, long period) {
+  lcec_master_t *master = slave->master;
+  lcec_el95xx_data_t *hal_data = (lcec_el95xx_data_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
 
   // wait for slave to be operational

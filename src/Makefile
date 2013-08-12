@@ -393,7 +393,7 @@ endif
 ifeq ($(BUILD_SYS),kbuild)
 
 modules:
-	$(PYTHON) modsilent.py $(MAKE) KBUILD_EXTRA_SYMBOLS="$(moduledir)/Module.symvers $(EMCEC_SYMBOLS)" -C $(KERNELDIR) SUBDIRS=`pwd` CC=$(CC) V=0 modules
+	$(PYTHON) modsilent.py $(MAKE) KBUILD_EXTRA_SYMBOLS="$(moduledir)/Module.symvers $(LCEC_SYMBOLS)" -C $(KERNELDIR) SUBDIRS=`pwd` CC=$(CC) V=0 modules
 	-cp Module.symvers *$(MODULE_EXT) ../rtlib/
 endif
 
@@ -797,21 +797,21 @@ setsserial-objs :=			  \
     hal/drivers/mesa-hostmot2/setsserial.o  \
     $(MATHSTUB)
 
-obj-$(CONFIG_EMCEC) += emcec.o
-emcec-objs :=                             \
-    hal/drivers/ethercat/emcec.o          \
-    hal/drivers/ethercat/emcec_el1xxx.o   \
-    hal/drivers/ethercat/emcec_el2521.o   \
-    hal/drivers/ethercat/emcec_el2xxx.o   \
-    hal/drivers/ethercat/emcec_el31x2.o   \
-    hal/drivers/ethercat/emcec_el40x2.o   \
-    hal/drivers/ethercat/emcec_el41x2.o   \
-    hal/drivers/ethercat/emcec_el5151.o   \
-    hal/drivers/ethercat/emcec_el5152.o   \
-    hal/drivers/ethercat/emcec_el7342.o   \
-    hal/drivers/ethercat/emcec_el95xx.o   \
-    hal/drivers/ethercat/emcec_generic.o  \
-    hal/drivers/ethercat/emcec_stmds5k.o  \
+obj-$(CONFIG_LCEC) += lcec.o
+lcec-objs :=                             \
+    hal/drivers/ethercat/lcec.o          \
+    hal/drivers/ethercat/lcec_el1xxx.o   \
+    hal/drivers/ethercat/lcec_el2521.o   \
+    hal/drivers/ethercat/lcec_el2xxx.o   \
+    hal/drivers/ethercat/lcec_el31x2.o   \
+    hal/drivers/ethercat/lcec_el40x2.o   \
+    hal/drivers/ethercat/lcec_el41x2.o   \
+    hal/drivers/ethercat/lcec_el5151.o   \
+    hal/drivers/ethercat/lcec_el5152.o   \
+    hal/drivers/ethercat/lcec_el7342.o   \
+    hal/drivers/ethercat/lcec_el95xx.o   \
+    hal/drivers/ethercat/lcec_generic.o  \
+    hal/drivers/ethercat/lcec_stmds5k.o  \
     $(MATHSTUB)
 
 obj-$(CONFIG_PROBE_PARPORT) += probe_parport.o
@@ -990,7 +990,7 @@ endif
 ../rtlib/pumakins$(MODULE_EXT): $(addprefix objects/rt,$(pumakins-objs))
 ../rtlib/scarakins$(MODULE_EXT): $(addprefix objects/rt,$(scarakins-objs))
 ../rtlib/hal_gm$(MODULE_EXT): $(addprefix objects/rt,$(hal_gm-objs))
-../rtlib/emcec$(MODULE_EXT): $(addprefix objects/rt,$(emcec-objs))
+../rtlib/lcec$(MODULE_EXT): $(addprefix objects/rt,$(lcec-objs))
 
 ifeq ($(TRIVIAL_BUILD),no)
 READ_RTDEPS = $(wildcard $(RTDEPS))

@@ -15,23 +15,24 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
-#ifndef _EMCEC_EL95XX_H_
-#define _EMCEC_EL95XX_H_
+#ifndef _LCEC_EL40X2_H_
+#define _LCEC_EL40X2_H_
 
 #include <linux/ctype.h>
-#include "emcec.h"
+#include "lcec.h"
 
-#define EMCEC_EL95xx_VID EMCEC_BECKHOFF_VID
+#define LCEC_EL40x2_VID LCEC_BECKHOFF_VID
 
-#define EMCEC_EL9505_PID 0x25213052
-#define EMCEC_EL9508_PID 0x25243052
-#define EMCEC_EL9510_PID 0x25263052
-#define EMCEC_EL9512_PID 0x25283052
-#define EMCEC_EL9515_PID 0x252b3052
+#define LCEC_EL4002_PID 0x0fa23052
+#define LCEC_EL4012_PID 0x0fac3052
+#define LCEC_EL4022_PID 0x0fb63052
+#define LCEC_EL4032_PID 0x0fc03052
 
-#define EMCEC_EL95xx_PDOS 2
+#define LCEC_EL40x2_PDOS  2
 
-int emcec_el95xx_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
+#define LCEC_EL40x2_CHANS 2
+
+int lcec_el40x2_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
 
 #endif
 

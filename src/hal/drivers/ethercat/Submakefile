@@ -1,9 +1,9 @@
-ifeq ($(CONFIG_EMCEC),m)
-EMCEC_CONF_SRC = hal/drivers/ethercat/emcec_conf.c
-USERSRCS += $(EMCEC_CONF_SRC)
-../bin/emcec_conf: $(call TOOBJS, $(EMCEC_CONF_SRC)) ../lib/liblinuxcnchal.so.0
+ifeq ($(CONFIG_LCEC),m)
+LCEC_CONF_SRC = hal/drivers/ethercat/lcec_conf.c
+USERSRCS += $(LCEC_CONF_SRC)
+../bin/lcec_conf: $(call TOOBJS, $(LCEC_CONF_SRC)) ../lib/liblinuxcnchal.so.0
 	$(ECHO) Linking $(notdir $@)
 	$(Q)$(CC) $(LDFLAGS) -o $@ $^ -lexpat
-TARGETS += ../bin/emcec_conf
+TARGETS += ../bin/lcec_conf
 endif
 

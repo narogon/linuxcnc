@@ -23,48 +23,48 @@
 
 #include "hal.h"
 
-#include "emcec.h"
-#include "emcec_el2xxx.h"
+#include "lcec.h"
+#include "lcec_el2xxx.h"
 
 typedef struct {
   hal_bit_t *out;
   hal_bit_t invert;
   int pdo_os;
   int pdo_bp;
-} emcec_el2xxx_pin_t;
+} lcec_el2xxx_pin_t;
 
-void emcec_el2xxx_write(struct emcec_slave *slave, long period);
+void lcec_el2xxx_write(struct lcec_slave *slave, long period);
 
-int emcec_el2xxx_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
-  emcec_master_t *master = slave->master;
-  emcec_el2xxx_pin_t *hal_data;
-  emcec_el2xxx_pin_t *pin;
+int lcec_el2xxx_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
+  lcec_master_t *master = slave->master;
+  lcec_el2xxx_pin_t *hal_data;
+  lcec_el2xxx_pin_t *pin;
   int i;
   int err;
 
   // initialize callbacks
-  slave->proc_write = emcec_el2xxx_write;
+  slave->proc_write = lcec_el2xxx_write;
 
   // alloc hal memory
-  if ((hal_data = hal_malloc(sizeof(emcec_el2xxx_pin_t) * slave->pdo_entry_count)) == NULL) {
-    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "hal_malloc() for slave %s.%s failed\n", master->name, slave->name);
+  if ((hal_data = hal_malloc(sizeof(lcec_el2xxx_pin_t) * slave->pdo_entry_count)) == NULL) {
+    rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "hal_malloc() for slave %s.%s failed\n", master->name, slave->name);
     return -EIO;
   }
-  memset(hal_data, 0, sizeof(emcec_el2xxx_pin_t) * slave->pdo_entry_count);
+  memset(hal_data, 0, sizeof(lcec_el2xxx_pin_t) * slave->pdo_entry_count);
   slave->hal_data = hal_data;
 
   // initialize pins
   for (i=0, pin=hal_data; i<slave->pdo_entry_count; i++, pin++) {
     // initialize POD entry
-    EMCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, 0x7000 + (i << 4), 0x01, &pin->pdo_os, &pin->pdo_bp);
+    LCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, 0x7000 + (i << 4), 0x01, &pin->pdo_os, &pin->pdo_bp);
 
     // export pins
-    if ((err = hal_pin_bit_newf(HAL_IN, &(pin->out), comp_id, "%s.%s.%s.dout-%d", EMCEC_MODULE_NAME, master->name, slave->name, i)) != 0) {
-      rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.dout-%02d failed\n", EMCEC_MODULE_NAME, master->name, slave->name, i);
+    if ((err = hal_pin_bit_newf(HAL_IN, &(pin->out), comp_id, "%s.%s.%s.dout-%d", LCEC_MODULE_NAME, master->name, slave->name, i)) != 0) {
+      rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.dout-%02d failed\n", LCEC_MODULE_NAME, master->name, slave->name, i);
       return err;
     }
-    if ((err = hal_param_bit_newf(HAL_RW, &(pin->invert), comp_id, "%s.%s.%s.dout-%d-invert", EMCEC_MODULE_NAME, master->name, slave->name, i)) != 0) {
-      rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.dout-%02d-invert failed\n", EMCEC_MODULE_NAME, master->name, slave->name, i);
+    if ((err = hal_param_bit_newf(HAL_RW, &(pin->invert), comp_id, "%s.%s.%s.dout-%d-invert", LCEC_MODULE_NAME, master->name, slave->name, i)) != 0) {
+      rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.dout-%02d-invert failed\n", LCEC_MODULE_NAME, master->name, slave->name, i);
       return err;
     }
 
@@ -76,11 +76,11 @@ int emcec_el2xxx_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t
   return 0;
 }
 
-void emcec_el2xxx_write(struct emcec_slave *slave, long period) {
-  emcec_master_t *master = slave->master;
-  emcec_el2xxx_pin_t *hal_data = (emcec_el2xxx_pin_t *) slave->hal_data;
+void lcec_el2xxx_write(struct lcec_slave *slave, long period) {
+  lcec_master_t *master = slave->master;
+  lcec_el2xxx_pin_t *hal_data = (lcec_el2xxx_pin_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
-  emcec_el2xxx_pin_t *pin;
+  lcec_el2xxx_pin_t *pin;
   int i, s;
 
   // set outputs

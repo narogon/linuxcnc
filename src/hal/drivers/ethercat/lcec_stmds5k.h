@@ -15,18 +15,18 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
-#ifndef _EMCEC_STMDS5K_H_
-#define _EMCEC_STMDS5K_H_
+#ifndef _LCEC_STMDS5K_H_
+#define _LCEC_STMDS5K_H_
 
 #include <linux/ctype.h>
-#include "emcec.h"
+#include "lcec.h"
 
-#define EMCEC_STMDS5K_VID EMCEC_STOEBER_VID
-#define EMCEC_STMDS5K_PID 0x00001388
+#define LCEC_STMDS5K_VID LCEC_STOEBER_VID
+#define LCEC_STMDS5K_PID 0x00001388
 
-#define EMCEC_STMDS5K_PDOS  8
+#define LCEC_STMDS5K_PDOS  8
 
-int emcec_stmds5k_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
+int lcec_stmds5k_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
 
 #endif
 

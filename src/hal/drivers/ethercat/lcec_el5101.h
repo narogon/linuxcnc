@@ -15,28 +15,21 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
-#ifndef _EMCEC_GENERIC_H_
-#define _EMCEC_GENERIC_H_
+#ifndef _LCEC_EL5101_H_
+#define _LCEC_EL5101_H_
 
 #include <linux/ctype.h>
-#include "emcec.h"
-#include "emcec_conf.h"
+#include "lcec.h"
 
-#define EMCEC_GENERIC_MAX_SUBPINS 32
+#define LCEC_EL5101_VID LCEC_BECKHOFF_VID
+#define LCEC_EL5101_PID 0x13ed3052
 
-typedef struct {
-  char name[EMCEC_CONF_STR_MAXLEN];
-  hal_type_t type;
-  hal_pin_dir_t dir;
-  void *pin[EMCEC_GENERIC_MAX_SUBPINS];
-  uint16_t pdo_idx;
-  uint8_t pdo_sidx;
-  int pdo_len;
-  int pdo_os;
-  int pdo_bp;
-} emcec_generic_pin_t;
+#define LCEC_EL5101_PDOS 8
 
-int emcec_generic_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
+#define LCEC_EL5101_PERIOD_SCALE    500e-9
+#define LCEC_EL5101_FREQUENCY_SCALE 5e-2
+
+int lcec_el5101_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
 
 #endif
 

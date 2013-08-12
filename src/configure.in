@@ -989,18 +989,18 @@ AC_SUBST(BUILD_DOCS_HTML)
 # check for ethercat dev files and enable ethercat hal driver
 AC_MSG_CHECKING([for ethercat master dev files])
 
-CONFIG_EMCEC=n
-EMCEC_SYMBOLS=""
+CONFIG_LCEC=n
+LCEC_SYMBOLS=""
 rm -f "${BUILD_TOPLEVEL}/src/hal/drivers/ethercat/ecrt.h"
 
 # ideal case: dev-package installed
 if test -e "$RTDIR/include/ecrt.h"; then
-    CONFIG_EMCEC=m
+    CONFIG_LCEC=m
 else
     # try to find ethercat include file somwhere else
     for i in /usr/include/ecrt.h /usr/local/include/ecrt.h; do
         if test -e $i; then
-            CONFIG_EMCEC=m
+            CONFIG_LCEC=m
             # hack to avoid adding /usr/include to the module build include path
             ln -s $i "${BUILD_TOPLEVEL}/src/hal/drivers/ethercat/ecrt.h"
             break
@@ -1008,10 +1008,10 @@ else
     done
 fi
 
-if test "$CONFIG_EMCEC" = "m"; then
+if test "$CONFIG_LCEC" = "m"; then
     # try to find symbol file
     if test -e $MODULE_DIR/ethercat/Module.symvers; then
-        EMCEC_SYMBOLS=$MODULE_DIR/ethercat/Module.symvers
+        LCEC_SYMBOLS=$MODULE_DIR/ethercat/Module.symvers
     fi
 
     AC_MSG_RESULT([found, hal driver enabled])
@@ -1019,8 +1019,8 @@ else
     AC_MSG_RESULT([not found, hal driver disabled])
 fi
 
-AC_SUBST(CONFIG_EMCEC)
-AC_SUBST(EMCEC_SYMBOLS)
+AC_SUBST(CONFIG_LCEC)
+AC_SUBST(LCEC_SYMBOLS)
 
 #############################################################################
 # Section 4 - Check for math support                                         #

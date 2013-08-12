@@ -15,20 +15,23 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
-#ifndef _EMCEC_EL5151_H_
-#define _EMCEC_EL5151_H_
+#ifndef _LCEC_EL95XX_H_
+#define _LCEC_EL95XX_H_
 
 #include <linux/ctype.h>
-#include "emcec.h"
+#include "lcec.h"
 
-#define EMCEC_EL5151_VID EMCEC_BECKHOFF_VID
-#define EMCEC_EL5151_PID 0x141f3052
+#define LCEC_EL95xx_VID LCEC_BECKHOFF_VID
 
-#define EMCEC_EL5151_PDOS 18
+#define LCEC_EL9505_PID 0x25213052
+#define LCEC_EL9508_PID 0x25243052
+#define LCEC_EL9510_PID 0x25263052
+#define LCEC_EL9512_PID 0x25283052
+#define LCEC_EL9515_PID 0x252b3052
 
-#define EMCEC_EL5151_PERIOD_SCALE 1e-7
+#define LCEC_EL95xx_PDOS 2
 
-int emcec_el5151_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
+int lcec_el95xx_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
 
 #endif
 

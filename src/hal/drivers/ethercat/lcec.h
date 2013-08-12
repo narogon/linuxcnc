@@ -15,18 +15,18 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
-#ifndef _EMCEC_H_
-#define _EMCEC_H_
+#ifndef _LCEC_H_
+#define _LCEC_H_
 
 #include <linux/ctype.h>
 
 #include <rtai_sem.h>
 
 #include "ecrt.h"
-#include "emcec_conf.h"
+#include "lcec_conf.h"
 
 // list macros
-#define EMCEC_LIST_APPEND(first, last, item) \
+#define LCEC_LIST_APPEND(first, last, item) \
 do {                             \
   (item)->prev = (last);         \
   if ((item)->prev != NULL) {    \
@@ -38,7 +38,7 @@ do {                             \
 } while (0);                     \
 
 // pdo macros
-#define EMCEC_PDO_INIT(pdo, pos, vid, pid, idx, sidx, off, bpos) \
+#define LCEC_PDO_INIT(pdo, pos, vid, pid, idx, sidx, off, bpos) \
 do {                        \
   pdo->position = pos;      \
   pdo->vendor_id = vid;     \
@@ -50,45 +50,45 @@ do {                        \
   pdo++;                    \
 } while (0);                \
 
-#define EMCEC_MSG_PFX "EMCEC: "
+#define LCEC_MSG_PFX "LCEC: "
 
 // vendor ids
-#define EMCEC_BECKHOFF_VID 0x00000002
-#define EMCEC_STOEBER_VID  0x000000b9
+#define LCEC_BECKHOFF_VID 0x00000002
+#define LCEC_STOEBER_VID  0x000000b9
 
 // SDO request timeout (ms)
-#define EMCEC_SDO_REQ_TIMEOUT 1000
+#define LCEC_SDO_REQ_TIMEOUT 1000
 
-struct emcec_master;
-struct emcec_slave;
+struct lcec_master;
+struct lcec_slave;
 
-typedef int (*emcec_slave_init_t) (int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
-typedef void (*emcec_slave_cleanup_t) (struct emcec_slave *slave);
-typedef void (*emcec_slave_rw_t) (struct emcec_slave *slave, long period);
+typedef int (*lcec_slave_init_t) (int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);
+typedef void (*lcec_slave_cleanup_t) (struct lcec_slave *slave);
+typedef void (*lcec_slave_rw_t) (struct lcec_slave *slave, long period);
 
-typedef struct emcec_master_data {
+typedef struct lcec_master_data {
   hal_u32_t *slaves_responding;
   hal_bit_t *state_init;
   hal_bit_t *state_preop;
   hal_bit_t *state_safeop;
   hal_bit_t *state_op;
   hal_bit_t *link_up;
-} emcec_master_data_t;
+} lcec_master_data_t;
 
-typedef struct emcec_slave_state {
+typedef struct lcec_slave_state {
   hal_bit_t *online;
   hal_bit_t *operational;
   hal_bit_t *state_init;
   hal_bit_t *state_preop;
   hal_bit_t *state_safeop;
   hal_bit_t *state_op;
-} emcec_slave_state_t;
+} lcec_slave_state_t;
 
-typedef struct emcec_master {
-  struct emcec_master *prev;
-  struct emcec_master *next;
+typedef struct lcec_master {
+  struct lcec_master *prev;
+  struct lcec_master *next;
   int index;
-  char name[EMCEC_CONF_STR_MAXLEN];
+  char name[LCEC_CONF_STR_MAXLEN];
   ec_master_t *master;
   SEM semaphore;
   int pdo_entry_count;
@@ -96,14 +96,14 @@ typedef struct emcec_master {
   ec_domain_t *domain;
   uint8_t *process_data;
   int process_data_len;
-  struct emcec_slave *first_slave;
-  struct emcec_slave *last_slave;
-  emcec_master_data_t *hal_data;
+  struct lcec_slave *first_slave;
+  struct lcec_slave *last_slave;
+  lcec_master_data_t *hal_data;
   uint64_t app_time;
   uint32_t app_time_period;
   int sync_ref_cnt;
   int sync_ref_cycles;
-} emcec_master_t;
+} lcec_master_t;
 
 typedef struct {
   uint16_t assignActivate;
@@ -111,47 +111,47 @@ typedef struct {
   uint32_t sync0Shift;
   uint32_t sync1Cycle;
   uint32_t sync1Shift;
-} emcec_slave_dc_t;
+} lcec_slave_dc_t;
 
 typedef struct {
   uint16_t divider;
   uint16_t intervals;
-} emcec_slave_watchdog_t;
+} lcec_slave_watchdog_t;
 
 typedef struct {
   uint16_t index;
   int16_t subindex;
   size_t length;
   uint8_t data[];
-} emcec_slave_sdoconf_t;
+} lcec_slave_sdoconf_t;
 
-typedef struct emcec_slave {
-  struct emcec_slave *prev;
-  struct emcec_slave *next;
-  struct emcec_master *master;
+typedef struct lcec_slave {
+  struct lcec_slave *prev;
+  struct lcec_slave *next;
+  struct lcec_master *master;
   int index;
-  char name[EMCEC_CONF_STR_MAXLEN];
+  char name[LCEC_CONF_STR_MAXLEN];
   uint32_t vid;
   uint32_t pid;
   int pdo_entry_count;
   ec_sync_info_t *sync_info;
   ec_slave_config_t *config;
   ec_slave_config_state_t state;
-  emcec_slave_dc_t *dc_conf;
-  emcec_slave_watchdog_t *wd_conf;
-  emcec_slave_init_t proc_init;
-  emcec_slave_cleanup_t proc_cleanup;
-  emcec_slave_rw_t proc_read;
-  emcec_slave_rw_t proc_write;
-  emcec_slave_state_t *hal_state_data;
+  lcec_slave_dc_t *dc_conf;
+  lcec_slave_watchdog_t *wd_conf;
+  lcec_slave_init_t proc_init;
+  lcec_slave_cleanup_t proc_cleanup;
+  lcec_slave_rw_t proc_read;
+  lcec_slave_rw_t proc_write;
+  lcec_slave_state_t *hal_state_data;
   void *hal_data;
   ec_pdo_entry_info_t *generic_pdo_entries;
   ec_pdo_info_t *generic_pdos;
   ec_sync_info_t *generic_sync_managers;
-  emcec_slave_sdoconf_t *sdo_config;
-} emcec_slave_t;
+  lcec_slave_sdoconf_t *sdo_config;
+} lcec_slave_t;
 
-ec_sdo_request_t *emcec_read_sdo(struct emcec_slave *slave, uint16_t index, uint8_t subindex, size_t size);
+ec_sdo_request_t *lcec_read_sdo(struct lcec_slave *slave, uint16_t index, uint8_t subindex, size_t size);
 
 #endif
 
