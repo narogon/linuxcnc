@@ -166,7 +166,6 @@ int rtapi_app_main(void) {
   char name[HAL_NAME_LEN + 1];
   ec_pdo_entry_reg_t *pdo_entry_regs;
   emcec_slave_sdoconf_t *sdo_config;
-  int i;
 
   // connect to the HAL
   if ((comp_id = hal_init (EMCEC_MODULE_NAME)) < 0) {
