@@ -59,6 +59,9 @@ install: build
 
 	cp -dR $(extras)/* $(tmp)
 
+	mkdir -p $(tmp)/usr/realtime-@KERNEL_VERSION@/modules/ethercat
+	cp Module.symvers $(tmp)/usr/realtime-@KERNEL_VERSION@/modules/ethercat
+
 	dh_install --sourcedir=$(tmp)
 
 # Build architecture-independent files here.

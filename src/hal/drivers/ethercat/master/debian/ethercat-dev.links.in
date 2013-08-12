@@ -1,2 +1,2 @@
-usr/include/ecrt.h @KERNEL_BUILDDIR@/include/ecrt.h
+usr/include/ecrt.h /usr/realtime-@KERNEL_VERSION@/include/ecrt.h
 
