@@ -37,7 +37,7 @@ typedef struct {
   hal_bit_t *set_raw_count;
   hal_s32_t *set_raw_count_val;
   hal_s32_t *raw_count;
-  hal_s32_t *raw_period;
+  hal_u32_t *raw_period;
   hal_s32_t *count;
   hal_float_t *pos_scale;
   hal_float_t *pos;
@@ -236,7 +236,7 @@ int emcec_el5152_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t
       rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.enc-%d-count failed\n", EMCEC_MODULE_NAME, master->name, slave->name, i);
       return err;
     }
-    if ((err = hal_pin_s32_newf(HAL_OUT, &(chan->raw_period), comp_id, "%s.%s.%s.enc-%d-raw-period", EMCEC_MODULE_NAME, master->name, slave->name, i)) != 0) {
+    if ((err = hal_pin_u32_newf(HAL_OUT, &(chan->raw_period), comp_id, "%s.%s.%s.enc-%d-raw-period", EMCEC_MODULE_NAME, master->name, slave->name, i)) != 0) {
       rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.enc-%d-raw-period failed\n", EMCEC_MODULE_NAME, master->name, slave->name, i);
       return err;
     }
@@ -287,7 +287,8 @@ void emcec_el5152_read(struct emcec_slave *slave, long period) {
   uint8_t *pd = master->process_data;
   int i, idx_flag;
   emcec_el5152_chan_t *chan;
-  int32_t idx_count, raw_count, raw_period, raw_delta;
+  int32_t idx_count, raw_count, raw_delta;
+  uint32_t raw_period;
 
   // wait for slave to be operational
   if (!slave->state.operational) {
@@ -320,7 +321,7 @@ void emcec_el5152_read(struct emcec_slave *slave, long period) {
 
     // read raw values
     raw_count = EC_READ_S32(&pd[chan->count_pdo_os]);
-    raw_period = EC_READ_S32(&pd[chan->period_pdo_os]);
+    raw_period = EC_READ_U32(&pd[chan->period_pdo_os]);
 
     // check for operational change of slave
     if (!hal_data->last_operational) {
@@ -372,7 +373,7 @@ void emcec_el5152_read(struct emcec_slave *slave, long period) {
     *(chan->pos) = *(chan->count) * chan->scale;
 
     // scale period
-    *(chan->period) = *(chan->raw_period) * EMCEC_EL5152_PERIOD_SCALE;
+    *(chan->period) = ((double) (*(chan->raw_period))) * EMCEC_EL5152_PERIOD_SCALE;
   }
 
   hal_data->last_operational = 1;

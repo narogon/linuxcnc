@@ -32,6 +32,7 @@
 #include "emcec_el31x2.h"
 #include "emcec_el40x2.h"
 #include "emcec_el41x2.h"
+#include "emcec_el5101.h"
 #include "emcec_el5151.h"
 #include "emcec_el5152.h"
 #include "emcec_el2521.h"
@@ -112,6 +113,7 @@ static const emcec_typelist_t types[] = {
   { emcecSlaveTypeEL4132, EMCEC_EL41x2_VID, EMCEC_EL4132_PID, EMCEC_EL41x2_PDOS, emcec_el41x2_init},
 
   // encoder inputs
+  { emcecSlaveTypeEL5101, EMCEC_EL5101_VID, EMCEC_EL5101_PID, EMCEC_EL5101_PDOS, emcec_el5101_init},
   { emcecSlaveTypeEL5151, EMCEC_EL5151_VID, EMCEC_EL5151_PID, EMCEC_EL5151_PDOS, emcec_el5151_init},
   { emcecSlaveTypeEL5152, EMCEC_EL5152_VID, EMCEC_EL5152_PID, EMCEC_EL5152_PDOS, emcec_el5152_init},
 

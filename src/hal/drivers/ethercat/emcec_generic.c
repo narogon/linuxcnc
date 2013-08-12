@@ -142,7 +142,7 @@ void emcec_generic_read(struct emcec_slave *slave, long period) {
 
     switch (hal_data->type) {
       case HAL_BIT:
-        offset = hal_data->pdo_os << 3 || (hal_data->pdo_bp & 0x07);
+        offset = hal_data->pdo_os << 3 | (hal_data->pdo_bp & 0x07);
         for (j=0; j < EMCEC_GENERIC_MAX_SUBPINS && hal_data->pin[j] != NULL; j++, offset++) {
           *((hal_bit_t *) hal_data->pin[j]) = EC_READ_BIT(&pd[offset >> 3], offset & 0x07);
         }
@@ -199,13 +199,13 @@ void emcec_generic_write(struct emcec_slave *slave, long period) {
   // write data
   for (i=0; i<slave->pdo_entry_count; i++, hal_data++) {
     // skip wrong direction and uninitialized pins
-    if (hal_data->dir != HAL_OUT || hal_data->pin[0] == NULL) {
+    if (hal_data->dir != HAL_IN || hal_data->pin[0] == NULL) {
       continue;
     }
 
     switch (hal_data->type) {
       case HAL_BIT:
-        offset = hal_data->pdo_os << 3 || (hal_data->pdo_bp & 0x07);
+        offset = hal_data->pdo_os << 3 | (hal_data->pdo_bp & 0x07);
         for (j=0; j < EMCEC_GENERIC_MAX_SUBPINS && hal_data->pin[j] != NULL; j++, offset++) {
           EC_WRITE_BIT(&pd[offset >> 3], offset & 0x07, *((hal_bit_t *) hal_data->pin[j]));
         }

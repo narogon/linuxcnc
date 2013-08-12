@@ -104,6 +104,7 @@ static const EMCEC_CONF_TYPELIST_T slaveTypes[] = {
   { "EL4132", emcecSlaveTypeEL4132 },
 
   // encoder inputs
+  { "EL5101", emcecSlaveTypeEL5101 },
   { "EL5151", emcecSlaveTypeEL5151 },
   { "EL5152", emcecSlaveTypeEL5152 },
 

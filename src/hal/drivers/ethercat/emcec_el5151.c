@@ -44,7 +44,7 @@ typedef struct {
   hal_s32_t *set_raw_count_val;
   hal_s32_t *raw_count;
   hal_s32_t *raw_latch;
-  hal_s32_t *raw_period;
+  hal_u32_t *raw_period;
   hal_s32_t *count;
   hal_float_t *pos_scale;
   hal_float_t *pos;
@@ -260,7 +260,7 @@ int emcec_el5151_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_t
     rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.enc-raw-latch failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
     return err;
   }
-  if ((err = hal_pin_s32_newf(HAL_OUT, &(hal_data->raw_period), comp_id, "%s.%s.%s.enc-raw-period", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
+  if ((err = hal_pin_u32_newf(HAL_OUT, &(hal_data->raw_period), comp_id, "%s.%s.%s.enc-raw-period", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
     rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.enc-raw-period failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
     return err;
   }
@@ -314,7 +314,8 @@ void emcec_el5151_read(struct emcec_slave *slave, long period) {
   emcec_master_t *master = slave->master;
   emcec_el5151_data_t *hal_data = (emcec_el5151_data_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
-  int32_t raw_count, raw_latch, raw_period, raw_delta;
+  int32_t raw_count, raw_latch, raw_delta;
+  uint32_t raw_period;
 
   // wait for slave to be operational
   if (!slave->state.operational) {
@@ -349,7 +350,7 @@ void emcec_el5151_read(struct emcec_slave *slave, long period) {
   // read raw values
   raw_count = EC_READ_S32(&pd[hal_data->count_pdo_os]);
   raw_latch = EC_READ_S32(&pd[hal_data->latch_pdo_os]);
-  raw_period = EC_READ_S32(&pd[hal_data->period_pdo_os]);
+  raw_period = EC_READ_U32(&pd[hal_data->period_pdo_os]);
 
   // check for operational change of slave
   if (!hal_data->last_operational) {
@@ -399,7 +400,7 @@ void emcec_el5151_read(struct emcec_slave *slave, long period) {
   *(hal_data->pos) = *(hal_data->count) * hal_data->scale;
 
   // scale period
-  *(hal_data->period) = *(hal_data->raw_period) * EMCEC_EL5151_PERIOD_SCALE;
+  *(hal_data->period) = ((double) (*(hal_data->raw_period))) * EMCEC_EL5151_PERIOD_SCALE;
 
   hal_data->last_operational = 1;
 }

@@ -20,6 +20,7 @@
 
 #include "rtapi.h"
 #include "rtapi_string.h"
+#include "rtapi_math.h"
 
 #include "hal.h"
 
@@ -28,7 +29,8 @@
 
 #define STMDS5K_PCT_REG_FACTOR (0.5 * (double)0x7fff)
 #define STMDS5K_PCT_REG_DIV    (2.0 / (double)0x7fff)
-#define STMDS5K_TORQUE_DIV     (1.0 / (double)0x7fff)
+#define STMDS5K_TORQUE_DIV     (1000.0 / (double)0x7fff)
+#define STMDS5K_TORQUE_REF_DIV (0.01)
 #define STMDS5K_RPM_FACTOR     (60.0)
 #define STMDS5K_RPM_DIV        (1.0 / 60.0)
 
@@ -47,6 +49,8 @@ typedef struct {
   hal_u32_t *pos_raw_lo;
   hal_float_t *pos_fb;
   hal_float_t *torque_fb;
+  hal_float_t *torque_fb_abs;
+  hal_float_t *torque_fb_pct;
   hal_float_t *torque_lim;
   hal_bit_t *stopped;
   hal_bit_t *at_speed;
@@ -67,9 +71,10 @@ typedef struct {
 
   hal_float_t speed_max_rpm;
   hal_float_t speed_max_rpm_sp;
-  hal_float_t torque_fb_scale;
+  hal_float_t torque_reference;
   hal_float_t pos_scale;
   hal_s32_t home_raw;
+  double torque_reference_rcpt;
   double speed_max_rpm_sp_rcpt;
 
   double pos_scale_old;
@@ -88,6 +93,7 @@ typedef struct {
   int speed_sp_rel_pdo_os;
   int torque_max_pdo_os;
 
+  ec_sdo_request_t *sdo_torque_reference;
   ec_sdo_request_t *sdo_speed_max_rpm;
   ec_sdo_request_t *sdo_speed_max_rpm_sp;
 
@@ -116,6 +122,16 @@ int emcec_stmds5k_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
   slave->hal_data = hal_data;
 
   // read sdos
+  // B18 : torque reference
+  if ((hal_data->sdo_torque_reference = emcec_read_sdo(slave, 0x2212, 0x00, 4)) == NULL) {
+    return -EIO;
+  }
+  hal_data->torque_reference = (double)EC_READ_S32(ecrt_sdo_request_data(hal_data->sdo_torque_reference)) * STMDS5K_TORQUE_REF_DIV;
+  if (hal_data->torque_reference > 1e-20 || hal_data->torque_reference < -1e-20) {
+    hal_data->torque_reference_rcpt = 1.0 / hal_data->torque_reference;
+  } else {
+    hal_data->torque_reference_rcpt = 0.0;
+  }
   // C01 : max rpm
   if ((hal_data->sdo_speed_max_rpm = emcec_read_sdo(slave, 0x2401, 0x00, 4)) == NULL) {
     return -EIO;
@@ -126,7 +142,7 @@ int emcec_stmds5k_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
     return -EIO;
   }
   hal_data->speed_max_rpm_sp = (double)EC_READ_S16(ecrt_sdo_request_data(hal_data->sdo_speed_max_rpm_sp));
-  if (hal_data->speed_max_rpm_sp != 0) {
+  if (hal_data->speed_max_rpm_sp > 1e-20 || hal_data->speed_max_rpm_sp < -1e-20) {
     hal_data->speed_max_rpm_sp_rcpt = 1.0 / hal_data->speed_max_rpm_sp;
   } else {
     hal_data->speed_max_rpm_sp_rcpt = 0.0;
@@ -185,6 +201,14 @@ int emcec_stmds5k_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
   }
   if ((err = hal_pin_float_newf(HAL_OUT, &(hal_data->torque_fb), comp_id, "%s.%s.%s.srv-torque-fb", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
     rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.srv-torque-fb failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
+    return err;
+  }
+  if ((err = hal_pin_float_newf(HAL_OUT, &(hal_data->torque_fb_abs), comp_id, "%s.%s.%s.srv-torque-fb-abs", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.srv-torque-fb-abs failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
+    return err;
+  }
+  if ((err = hal_pin_float_newf(HAL_OUT, &(hal_data->torque_fb_pct), comp_id, "%s.%s.%s.srv-torque-fb-pct", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.srv-torque-fb-pct failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
     return err;
   }
   if ((err = hal_pin_float_newf(HAL_IN, &(hal_data->torque_lim), comp_id, "%s.%s.%s.srv-torque-lim", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
@@ -257,8 +281,8 @@ int emcec_stmds5k_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
     rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.srv-pos-scale failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
     return err;
   }
-  if ((err = hal_param_float_newf(HAL_RW, &(hal_data->torque_fb_scale), comp_id, "%s.%s.%s.srv-torque-fb-scale", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
-    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.srv-torque-fb-scale failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
+  if ((err = hal_param_float_newf(HAL_RO, &(hal_data->torque_reference), comp_id, "%s.%s.%s.srv-torque-ref", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR, EMCEC_MSG_PFX "exporting pin %s.%s.%s.srv-torque-ref failed\n", EMCEC_MODULE_NAME, master->name, slave->name);
     return err;
   }
   if ((err = hal_param_float_newf(HAL_RO, &(hal_data->speed_max_rpm), comp_id, "%s.%s.%s.srv-max-rpm", EMCEC_MODULE_NAME, master->name, slave->name)) != 0) {
@@ -283,6 +307,8 @@ int emcec_stmds5k_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
   *(hal_data->pos_raw_lo) = 0;
   *(hal_data->pos_fb) = 0.0;
   *(hal_data->torque_fb) = 0.0;
+  *(hal_data->torque_fb_abs) = 0.0;
+  *(hal_data->torque_fb_pct) = 0.0;
   *(hal_data->torque_lim) = 1.0;
   *(hal_data->stopped) = 0;
   *(hal_data->at_speed) = 0;
@@ -303,7 +329,6 @@ int emcec_stmds5k_init(int comp_id, struct emcec_slave *slave, ec_pdo_entry_reg_
 
   // initialize variables
   hal_data->pos_scale = 1.0;
-  hal_data->torque_fb_scale = 39.8;
   hal_data->do_init = 1;
   hal_data->pos_cnt = 0;
   hal_data->index_cnt = 0;
@@ -345,6 +370,7 @@ void emcec_stmds5k_read(struct emcec_slave *slave, long period) {
   uint8_t dev_state;
   uint16_t speed_state;
   int16_t speed_raw, torque_raw;
+  double torque;
 
   // wait for slave to be operational
   if (!slave->state.operational) {
@@ -375,7 +401,11 @@ void emcec_stmds5k_read(struct emcec_slave *slave, long period) {
   // read torque
   // E02 : torque motor filterd (x 0,1 Nm)
   torque_raw = EC_READ_S16(&pd[hal_data->torque_mot_pdo_os]);
-  *(hal_data->torque_fb) = (double)torque_raw * STMDS5K_TORQUE_DIV * hal_data->torque_fb_scale;
+  torque = (double)torque_raw * STMDS5K_TORQUE_DIV;
+  *(hal_data->torque_fb) = torque;
+  torque = fabs(torque);
+  *(hal_data->torque_fb_abs) = torque;
+  *(hal_data->torque_fb_pct) = torque * hal_data->torque_reference_rcpt * 100.0;
 
   // update raw position counter
   pos_cnt = EC_READ_S32(&pd[hal_data->pos_mot_pdo_os]);
