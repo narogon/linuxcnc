@@ -183,8 +183,10 @@ int rtapi_app_main(void) {
       goto fail2;
     }
 
+#ifdef __KERNEL__
     // register callbacks
     ecrt_master_callbacks(master->master, lcec_request_lock, lcec_release_lock, master);
+#endif
 
     // create domain
     if (!(master->domain = ecrt_master_create_domain(master->master))) {
