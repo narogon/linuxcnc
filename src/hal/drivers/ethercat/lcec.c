@@ -1055,7 +1055,7 @@ ec_sdo_request_t *lcec_read_sdo(struct lcec_slave *slave, uint16_t index, uint8_
   lcec_master_t *master = slave->master;
   ec_sdo_request_t *sdo;
   ec_request_state_t sdo_state;
-  unsigned long jiffies_timeout;
+  unsigned long jiffies_start;
 
   // create request
   if (!(sdo = ecrt_slave_config_create_sdo_request(slave->config, index, subindex, size))) {
@@ -1070,9 +1070,9 @@ ec_sdo_request_t *lcec_read_sdo(struct lcec_slave *slave, uint16_t index, uint8_
   ecrt_sdo_request_read(sdo);
 
   // wait for completition (master's time out does not work here. why???)
-  jiffies_timeout = jiffies + HZ * LCEC_SDO_REQ_TIMEOUT / 1000;
-  while (jiffies < jiffies_timeout && (sdo_state = ecrt_sdo_request_state(sdo)) == EC_REQUEST_BUSY) {
-    msleep(1);
+  jiffies_start = jiffies;
+  while ((jiffies -  jiffies_start) < (HZ * LCEC_SDO_REQ_TIMEOUT / 1000) && (sdo_state = ecrt_sdo_request_state(sdo)) == EC_REQUEST_BUSY) {
+    schedule();
   }
 
   // check state
