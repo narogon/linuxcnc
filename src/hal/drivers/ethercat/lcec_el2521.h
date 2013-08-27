@@ -26,7 +26,6 @@
 // - travel distance control active (8000:0A) must be FALSE (0x00, default)
 // ****************************************************************************
 
-#include <linux/ctype.h>
 #include "lcec.h"
 
 #define LCEC_EL2521_VID LCEC_BECKHOFF_VID

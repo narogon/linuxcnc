@@ -16,13 +16,6 @@
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
 
-#include <linux/ctype.h>
-
-#include "rtapi.h"
-#include "rtapi_string.h"
-
-#include "hal.h"
-
 #include "lcec.h"
 #include "lcec_el31x2.h"
 

@@ -18,7 +18,6 @@
 #ifndef _LCEC_EL5152_H_
 #define _LCEC_EL5152_H_
 
-#include <linux/ctype.h>
 #include "lcec.h"
 
 #define LCEC_EL5152_VID LCEC_BECKHOFF_VID

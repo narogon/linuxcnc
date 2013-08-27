@@ -16,16 +16,8 @@
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //
 
-#include <linux/ctype.h>
-
-#include "rtapi.h"
-#include "rtapi_string.h"
-
-#include "hal.h"
-
 #include "lcec.h"
 #include "lcec_el7342.h"
-
 
 #define INFO_SEL_STATUS_WORD   0
 #define INFO_SEL_MOTOR_VOLT    1

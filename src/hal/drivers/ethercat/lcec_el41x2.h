@@ -18,7 +18,6 @@
 #ifndef _LCEC_EL41X2_H_
 #define _LCEC_EL41X2_H_
 
-#include <linux/ctype.h>
 #include "lcec.h"
 
 #define LCEC_EL41x2_VID LCEC_BECKHOFF_VID

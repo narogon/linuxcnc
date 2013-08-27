@@ -18,7 +18,6 @@
 #ifndef _LCEC_GENERIC_H_
 #define _LCEC_GENERIC_H_
 
-#include <linux/ctype.h>
 #include "lcec.h"
 #include "lcec_conf.h"
 

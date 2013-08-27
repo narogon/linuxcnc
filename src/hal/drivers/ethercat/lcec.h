@@ -19,8 +19,16 @@
 #define _LCEC_H_
 
 #include <linux/ctype.h>
-
+#include <linux/slab.h>
 #include <rtai_sem.h>
+
+#include "hal.h"
+
+#include "rtapi.h"
+#include "rtapi_ctype.h"
+#include "rtapi_app.h"
+#include "rtapi_string.h"
+#include "rtapi_math.h"
 
 #include "ecrt.h"
 #include "lcec_conf.h"
