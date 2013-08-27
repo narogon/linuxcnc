@@ -31,8 +31,8 @@ typedef struct {
   uint16_t pdo_idx;
   uint8_t pdo_sidx;
   int pdo_len;
-  int pdo_os;
-  int pdo_bp;
+  unsigned int pdo_os;
+  unsigned int pdo_bp;
 } lcec_generic_pin_t;
 
 int lcec_generic_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs);

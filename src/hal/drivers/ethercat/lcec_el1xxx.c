@@ -22,8 +22,8 @@
 typedef struct {
   hal_bit_t *in;
   hal_bit_t *in_not;
-  int pdo_os;
-  int pdo_bp;
+  unsigned int pdo_os;
+  unsigned int pdo_bp;
 } lcec_el1xxx_pin_t;
 
 void lcec_el1xxx_read(struct lcec_slave *slave, long period);

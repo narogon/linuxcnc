@@ -22,10 +22,10 @@
 typedef struct {
   hal_bit_t *power_ok;
   hal_bit_t *overload;
-  int power_ok_pdo_os;
-  int power_ok_pdo_bp;
-  int overload_pdo_os;
-  int overload_pdo_bp;
+  unsigned int power_ok_pdo_os;
+  unsigned int power_ok_pdo_bp;
+  unsigned int overload_pdo_os;
+  unsigned int overload_pdo_bp;
 } lcec_el95xx_data_t;
 
 void lcec_el95xx_read(struct lcec_slave *slave, long period);

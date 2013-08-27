@@ -27,8 +27,8 @@ typedef struct {
   hal_float_t *scale;
   hal_float_t *bias;
   hal_float_t *val;
-  int state_pdo_os;
-  int val_pdo_os;
+  unsigned int state_pdo_os;
+  unsigned int val_pdo_os;
 } lcec_el31x2_chan_t;
 
 typedef struct {

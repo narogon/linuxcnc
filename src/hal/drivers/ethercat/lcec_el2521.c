@@ -45,10 +45,10 @@ typedef struct {
   double old_scale;		// stored scale value
   double scale_recip;		// reciprocal value used for scaling
 
-  int state_pdo_os;
-  int count_pdo_os;
-  int ctrl_pdo_os;
-  int freq_pdo_os;
+  unsigned int state_pdo_os;
+  unsigned int count_pdo_os;
+  unsigned int ctrl_pdo_os;
+  unsigned int freq_pdo_os;
 
   ec_sdo_request_t *sdo_req_base_freq;
   ec_sdo_request_t *sdo_req_max_freq;

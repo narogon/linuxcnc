@@ -36,21 +36,21 @@ typedef struct {
   hal_float_t *pos;
   hal_float_t *period;
 
-  int set_count_pdo_os;
-  int set_count_pdo_bp;
-  int set_count_val_pdo_os;
-  int set_count_done_pdo_os;
-  int set_count_done_pdo_bp;
-  int expol_stall_pdo_os;
-  int expol_stall_pdo_bp;
-  int ina_pdo_os;
-  int ina_pdo_bp;
-  int inb_pdo_os;
-  int inb_pdo_bp;
-  int tx_toggle_pdo_os;
-  int tx_toggle_pdo_bp;
-  int count_pdo_os;
-  int period_pdo_os;
+  unsigned int set_count_pdo_os;
+  unsigned int set_count_pdo_bp;
+  unsigned int set_count_val_pdo_os;
+  unsigned int set_count_done_pdo_os;
+  unsigned int set_count_done_pdo_bp;
+  unsigned int expol_stall_pdo_os;
+  unsigned int expol_stall_pdo_bp;
+  unsigned int ina_pdo_os;
+  unsigned int ina_pdo_bp;
+  unsigned int inb_pdo_os;
+  unsigned int inb_pdo_bp;
+  unsigned int tx_toggle_pdo_os;
+  unsigned int tx_toggle_pdo_bp;
+  unsigned int count_pdo_os;
+  unsigned int period_pdo_os;
 
   int do_init;
   int32_t last_count;

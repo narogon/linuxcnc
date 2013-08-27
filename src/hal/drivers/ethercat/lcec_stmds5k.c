@@ -76,14 +76,14 @@ typedef struct {
   int last_index_ena;
   int32_t index_ref;
 
-  int dev_state_pdo_os;
-  int speed_mot_pdo_os;
-  int torque_mot_pdo_os;
-  int speed_state_pdo_os;
-  int pos_mot_pdo_os;
-  int dev_ctrl_pdo_os;
-  int speed_sp_rel_pdo_os;
-  int torque_max_pdo_os;
+  unsigned int dev_state_pdo_os;
+  unsigned int speed_mot_pdo_os;
+  unsigned int torque_mot_pdo_os;
+  unsigned int speed_state_pdo_os;
+  unsigned int pos_mot_pdo_os;
+  unsigned int dev_ctrl_pdo_os;
+  unsigned int speed_sp_rel_pdo_os;
+  unsigned int torque_max_pdo_os;
 
   ec_sdo_request_t *sdo_torque_reference;
   ec_sdo_request_t *sdo_speed_max_rpm;

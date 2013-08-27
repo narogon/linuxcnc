@@ -54,14 +54,14 @@ typedef struct {
   hal_float_t *period;
   hal_float_t *frequency;
 
-  int status_pdo_os;
-  int value_pdo_os;
-  int latch_pdo_os;
-  int frequency_pdo_os;
-  int period_pdo_os;
-  int window_pdo_os;
-  int control_pdo_os;
-  int setval_pdo_os;
+  unsigned int status_pdo_os;
+  unsigned int value_pdo_os;
+  unsigned int latch_pdo_os;
+  unsigned int frequency_pdo_os;
+  unsigned int period_pdo_os;
+  unsigned int window_pdo_os;
+  unsigned int control_pdo_os;
+  unsigned int setval_pdo_os;
 
   int do_init;
   int16_t last_count;

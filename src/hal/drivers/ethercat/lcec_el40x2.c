@@ -33,7 +33,7 @@ typedef struct {
   hal_float_t *max_dc;
   hal_float_t *curr_dc;
   hal_s32_t *raw_val;
-  int val_pdo_os;
+  unsigned int val_pdo_os;
 } lcec_el40x2_chan_t;
 
 typedef struct {
