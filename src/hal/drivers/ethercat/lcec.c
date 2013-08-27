@@ -428,7 +428,7 @@ int lcec_parse_config(void) {
         master->index = master_conf->index;
         strncpy(master->name, master_conf->name, LCEC_CONF_STR_MAXLEN);
         master->name[LCEC_CONF_STR_MAXLEN - 1] = 0;
-        rt_sem_init(&master->semaphore, 1);
+        master->mutex = 0;
         master->app_time = 0;
         master->app_time_period = master_conf->appTimePeriod;
         master->sync_ref_cnt = 0;
@@ -828,9 +828,6 @@ void lcec_clear_config(void) {
       kfree(master->pdo_entry_regs);
     }
 
-    // delete semaphore
-    rt_sem_delete(&master->semaphore);
-
     // free master
     kfree(master);
     master = prev_master;
@@ -839,12 +836,12 @@ void lcec_clear_config(void) {
 
 void lcec_request_lock(void *data) {
   lcec_master_t *master = (lcec_master_t *) data;
-  rt_sem_wait(&master->semaphore);
+  rtapi_mutex_get(&master->mutex);
 }
 
 void lcec_release_lock(void *data) {
   lcec_master_t *master = (lcec_master_t *) data;
-  rt_sem_signal(&master->semaphore);
+  rtapi_mutex_give(&master->mutex);
 }
 
 lcec_master_data_t *lcec_init_master_hal(const char *pfx) {
@@ -991,11 +988,11 @@ void lcec_read_master(void *arg, long period) {
   ec_master_state_t ms;
 
   // receive process data & master state
-  rt_sem_wait(&master->semaphore);
+  rtapi_mutex_get(&master->mutex);
   ecrt_master_receive(master->master);
   ecrt_domain_process(master->domain);
   ecrt_master_state(master->master, &ms);
-  rt_sem_signal(&master->semaphore);
+  rtapi_mutex_give(&master->mutex);
 
   // update state pins
   lcec_update_master_hal(master->hal_data, &ms);
@@ -1008,9 +1005,9 @@ void lcec_read_master(void *arg, long period) {
   // process slaves
   for (slave = master->first_slave; slave != NULL; slave = slave->next) {
     // get slaves state
-    rt_sem_wait(&master->semaphore);
+    rtapi_mutex_get(&master->mutex);
     ecrt_slave_config_state(slave->config, &slave->state);
-    rt_sem_signal(&master->semaphore);
+    rtapi_mutex_give(&master->mutex);
     lcec_update_slave_state_hal(slave->hal_state_data, &slave->state);
 
     // process read function
@@ -1032,7 +1029,7 @@ void lcec_write_master(void *arg, long period) {
   }
 
   // send process data
-  rt_sem_wait(&master->semaphore);
+  rtapi_mutex_get(&master->mutex);
 
   // update application time
   master->app_time += master->app_time_period;
@@ -1051,7 +1048,7 @@ void lcec_write_master(void *arg, long period) {
   // send domain data
   ecrt_domain_queue(master->domain);
   ecrt_master_send(master->master);
-  rt_sem_signal(&master->semaphore);
+  rtapi_mutex_give(&master->mutex);
 }
 
 ec_sdo_request_t *lcec_read_sdo(struct lcec_slave *slave, uint16_t index, uint8_t subindex, size_t size) {

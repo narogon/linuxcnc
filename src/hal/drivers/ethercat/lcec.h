@@ -20,7 +20,6 @@
 
 #include <linux/ctype.h>
 #include <linux/slab.h>
-#include <rtai_sem.h>
 
 #include "hal.h"
 
@@ -98,7 +97,7 @@ typedef struct lcec_master {
   int index;
   char name[LCEC_CONF_STR_MAXLEN];
   ec_master_t *master;
-  SEM semaphore;
+  unsigned long mutex;
   int pdo_entry_count;
   ec_pdo_entry_reg_t *pdo_entry_regs;
   ec_domain_t *domain;
