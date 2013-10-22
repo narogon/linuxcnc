@@ -289,7 +289,7 @@ int main(int argc, char **argv) {
     fprintf(stderr, "%s: ERROR: couldn't map user/RT shared memory\n", modname);
     goto fail5;
   }
-  
+
   // setup header
   header = shmem_ptr;
   shmem_ptr += sizeof(LCEC_CONF_HEADER_T);
@@ -759,7 +759,7 @@ void parseSdoConfigAttrs(const char **attr) {
         fprintf(stderr, "%s: ERROR: Invalid sdoConfig idx %d\n", modname, tmp);
         XML_StopParser(parser, 0);
         return;
-      } 
+      }
       p->index = tmp;
       continue;
     }
@@ -775,7 +775,7 @@ void parseSdoConfigAttrs(const char **attr) {
         fprintf(stderr, "%s: ERROR: Invalid sdoConfig subIdx %d\n", modname, tmp);
         XML_StopParser(parser, 0);
         return;
-      } 
+      }
       p->subindex = tmp;
       continue;
     }
@@ -827,7 +827,7 @@ void parseSdoDataRawAttrs(const char **attr) {
           currSdoConf->length += len;
           currSlave->sdoConfigLength += len;
         }
-      } 
+      }
       continue;
     }
 
@@ -859,7 +859,7 @@ void parseSyncManagerAttrs(const char **attr) {
         fprintf(stderr, "%s: ERROR: Invalid syncManager idx %d\n", modname, tmp);
         XML_StopParser(parser, 0);
         return;
-      } 
+      }
       p->index = tmp;
       continue;
     }
@@ -923,7 +923,7 @@ void parsePdoAttrs(const char **attr) {
         fprintf(stderr, "%s: ERROR: Invalid pdo idx %d\n", modname, tmp);
         XML_StopParser(parser, 0);
         return;
-      } 
+      }
       p->index = tmp;
       continue;
     }
@@ -967,7 +967,7 @@ void parsePdoEntryAttrs(const char **attr) {
         fprintf(stderr, "%s: ERROR: Invalid pdoEntry idx %d\n", modname, tmp);
         XML_StopParser(parser, 0);
         return;
-      } 
+      }
       p->index = tmp;
       continue;
     }
@@ -979,7 +979,7 @@ void parsePdoEntryAttrs(const char **attr) {
         fprintf(stderr, "%s: ERROR: Invalid pdoEntry subIdx %d\n", modname, tmp);
         XML_StopParser(parser, 0);
         return;
-      } 
+      }
       p->subindex = tmp;
       continue;
     }
@@ -991,9 +991,15 @@ void parsePdoEntryAttrs(const char **attr) {
         fprintf(stderr, "%s: ERROR: Invalid pdoEntry bitLen %d\n", modname, tmp);
         XML_StopParser(parser, 0);
         return;
-      } 
+      }
       p->bitLength = tmp;
       continue;
+    }
+
+    // parse scale
+    if (strcmp(name, "scale") == 0) {
+        p->scale = atoi(val);
+        continue;
     }
 
     // parse halType
@@ -1008,6 +1014,10 @@ void parsePdoEntryAttrs(const char **attr) {
       }
       if (strcasecmp(val, "u32") == 0) {
         p->halType = HAL_U32;
+        continue;
+      }
+      if (strcasecmp(val, "special32") == 0) {
+        p->halType = HAL_SPECIAL_U32;
         continue;
       }
       fprintf(stderr, "%s: ERROR: Invalid pdoEntry halType %s\n", modname, val);

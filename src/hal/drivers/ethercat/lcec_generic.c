@@ -110,6 +110,30 @@ int lcec_generic_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t 
         *((hal_u32_t *) hal_data->pin[0]) = 0;
         break;
 
+        case HAL_SPECIAL_U32:
+        // check byte alignment
+        if (hal_data->pdo_bp != 0) {
+          rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unable to export U32 pin %s.%s.%s.%s: process data not byte alligned!\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          continue;
+        }
+
+        // check data size
+        if (hal_data->pdo_len != 8 && hal_data->pdo_len != 16 && hal_data->pdo_len != 32) {
+          rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unable to export U32 pin %s.%s.%s.%s: invalid process data bitlen!\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          continue;
+        }
+
+        // export pin
+        err = hal_pin_float_newf(hal_data->dir, ((hal_float_t **) &hal_data->pin[0]), comp_id, "%s.%s.%s.%s", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+        if (err != 0) {
+          rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "exporting pin %s.%s.%s.%s failed\n", LCEC_MODULE_NAME, master->name, slave->name, hal_data->name);
+          return err;
+        }
+
+        // initialize data
+        *((hal_float_t *) hal_data->pin[0]) = 0.0;
+        break;
+
       default:
           rtapi_print_msg(RTAPI_MSG_WARN, LCEC_MSG_PFX "unsupported pin type %d!\n", hal_data->type);
     }
@@ -123,8 +147,12 @@ void lcec_generic_read(struct lcec_slave *slave, long period) {
   lcec_generic_pin_t *hal_data = (lcec_generic_pin_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
   int i, j, offset;
+  hal_float_t *fval;
   hal_u32_t *uval;
   hal_s32_t *sval;
+  hal_u32_t temp;
+
+
 
   // read data
   for (i=0; i < slave->pdo_entry_count; i++, hal_data++) {
@@ -175,6 +203,27 @@ void lcec_generic_read(struct lcec_slave *slave, long period) {
         }
         break;
 
+      case HAL_SPECIAL_U32:
+        fval = (hal_float_t *) hal_data->pin[0];
+        switch (hal_data->pdo_len) {
+          case 8:
+            temp = EC_READ_U8(&pd[hal_data->pdo_os]);
+            break;
+          case 16:
+            temp = EC_READ_S16(&pd[hal_data->pdo_os]);
+            *fval = ((hal_s32_t)temp) / hal_data->scale;
+            break;
+          case 32:
+            temp = EC_READ_S32(&pd[hal_data->pdo_os]);
+            *fval = ((hal_s32_t)temp) / hal_data->scale;
+            break;
+          default:
+            *fval = 0.0;
+        }
+        //*fval = temp;
+        //*fval = *uval;
+        break;
+
       default:
         continue;
     }
@@ -188,6 +237,7 @@ void lcec_generic_write(struct lcec_slave *slave, long period) {
   int i, j, offset;
   hal_u32_t uval;
   hal_s32_t sval;
+  hal_float_t fval;
 
   // write data
   for (i=0; i<slave->pdo_entry_count; i++, hal_data++) {
@@ -238,6 +288,11 @@ void lcec_generic_write(struct lcec_slave *slave, long period) {
             EC_WRITE_U32(&pd[hal_data->pdo_os], uval);
             break;
         }
+        break;
+
+        case HAL_SPECIAL_U32:
+        fval = *((hal_float_t *) hal_data->pin[0]);
+        EC_WRITE_U32(&pd[hal_data->pdo_os], (hal_u32_t) (fval*hal_data->scale));
         break;
 
       default:

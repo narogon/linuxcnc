@@ -129,7 +129,7 @@ typedef struct {
   unsigned int pdoEntryCount;
   unsigned int pdoMappingCount;
   size_t sdoConfigLength;
-  char name[LCEC_CONF_STR_MAXLEN];    
+  char name[LCEC_CONF_STR_MAXLEN];
 } LCEC_CONF_SLAVE_T;
 
 typedef struct {
@@ -165,8 +165,9 @@ typedef struct {
   uint16_t index;
   uint8_t subindex;
   uint8_t bitLength;
+  float scale;
   hal_type_t halType;
-  char halPin[LCEC_CONF_STR_MAXLEN];    
+  char halPin[LCEC_CONF_STR_MAXLEN];
 } LCEC_CONF_PDOENTRY_T;
 
 typedef struct {
