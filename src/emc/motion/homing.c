@@ -84,7 +84,8 @@ static void home_do_moving_checks(emcmot_joint_t * joint)
 	}
     }
     /* check for reached end of move */
-    if (!joint->free_tp_active) {
+    //if (!joint->free_tp_active) {
+    if (0) {
 	/* reached end of move without hitting switch */
 	joint->free_tp_enable = 0;
 	reportError(_("end of move in home state %d"), joint->home_state);
@@ -214,7 +215,7 @@ void do_homing(void)
 	if (joint->home_state != HOME_IDLE) {
 	    homing_flag = 1; /* at least one joint is homing */
 	}
-	
+
 	/* when an joint is homing, 'check_for_faults()' ignores its limit
 	   switches, so that this code can do the right thing with them. Once
 	   the homing process is finished, the 'check_for_faults()' resumes
@@ -261,7 +262,7 @@ void do_homing(void)
 		} else {
 		    joint->home_state = HOME_UNLOCK_WAIT;
 		    immediate_state = 1;
-		}		     
+		}
 		break;
 
 	    case HOME_UNLOCK:
@@ -272,7 +273,7 @@ void do_homing(void)
 
 	    case HOME_UNLOCK_WAIT:
 		// if not yet unlocked, continue waiting
-		if ((joint->home_flags & HOME_UNLOCK_FIRST) && 
+		if ((joint->home_flags & HOME_UNLOCK_FIRST) &&
 		    !emcmotGetRotaryIsUnlocked(joint_num)) break;
 
 		// either we got here without an unlock needed, or the
@@ -368,7 +369,7 @@ void do_homing(void)
 		    break;
 		}
 		/* set up a move at 'search_vel' to find switch */
-		home_start_move(joint, joint->home_search_vel);
+		// home_start_move(joint, joint->home_search_vel);
 		/* next state */
 		joint->home_state = HOME_INITIAL_SEARCH_WAIT;
 		break;
@@ -383,8 +384,10 @@ void do_homing(void)
 		    /* yes, stop motion */
 		    joint->free_tp_enable = 0;
 		    /* go to next step */
-		    joint->home_state = HOME_SET_COARSE_POSITION;
-		    immediate_state = 1;
+		    //joint->home_state = HOME_SET_COARSE_POSITION;
+		    joint->home_state = HOME_SET_SWITCH_POSITION;
+		    joint->home_pause_timer=0;
+		    immediate_state = 0;
 		    break;
 		}
 		home_do_moving_checks(joint);
@@ -589,16 +592,21 @@ void do_homing(void)
 		   switch position as accurately as possible.  It sets the
 		   current joint position to 'home_offset', which is the
 		   location of the home switch in joint coordinates. */
+        if (joint->home_pause_timer < (1 * servo_freq)) {
+		    /* no, update timer and wait some more */
+		    joint->home_pause_timer++;
+		    break;
+		}
+		SET_JOINT_HOMING_FLAG(joint, 0);
 		/* set the current position to 'home_offset' */
-		offset = joint->home_offset - joint->pos_fb;
 		/* this moves the internal position but does not affect the
 		   motor position */
-		joint->pos_cmd += offset;
-		joint->pos_fb += offset;
-		joint->free_pos_cmd += offset;
-		joint->motor_offset -= offset;
+		joint->pos_cmd = joint->home_offset;
+		joint->pos_fb = joint->home_offset;
+		joint->free_pos_cmd = joint->home_offset;
+		joint->motor_offset = -joint->home_offset;
 		/* next state */
-		joint->home_state = HOME_FINAL_MOVE_START;
+		joint->home_state = HOME_LOCK;
 		immediate_state = 1;
 		break;
 
@@ -678,7 +686,7 @@ void do_homing(void)
 
 	    case HOME_SET_INDEX_POSITION:
 		/* This state is called when the encoder has been reset at
-		   the index pulse position.  It sets the current joint 
+		   the index pulse position.  It sets the current joint
 		   position to 'home_offset', which is the location of the
 		   index pulse in joint coordinates. */
 		/* set the current position to 'home_offset' */
@@ -719,9 +727,10 @@ void do_homing(void)
 		    /* clamp on max vel for this joint */
 		    if (joint->free_vel_lim > joint->vel_limit)
 			joint->free_vel_lim = joint->vel_limit;
-		} else { 
+		} else {
 		    joint->free_vel_lim = joint->vel_limit;
 		}
+		joint->free_vel_lim = 0.1 * joint->vel_limit;
 		/* start the move */
 		joint->free_tp_enable = 1;
 		joint->home_state = HOME_FINAL_MOVE_WAIT;
@@ -729,7 +738,7 @@ void do_homing(void)
 
 	    case HOME_FINAL_MOVE_WAIT:
 		/* This state is called while the machine makes its final
-		   move to the home position.  It terminates when the machine 
+		   move to the home position.  It terminates when the machine
 		   arrives at the final location. If the move hits a limit
 		   before it arrives, the home is aborted. */
 		/* have we arrived (and stopped) at home? */
@@ -765,7 +774,7 @@ void do_homing(void)
 
 	    case HOME_LOCK_WAIT:
 		// if not yet locked, continue waiting
-		if ((joint->home_flags & HOME_UNLOCK_FIRST) && 
+		if ((joint->home_flags & HOME_UNLOCK_FIRST) &&
 		    emcmotGetRotaryIsUnlocked(joint_num)) break;
 
 		// either we got here without a lock needed, or the
