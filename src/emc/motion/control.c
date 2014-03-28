@@ -463,12 +463,13 @@ static void process_inputs(void)
     if ( enables & FS_ENABLED ) {
 	scale *= emcmotStatus->feed_scale;
     }
-    if ( enables & AF_ENABLED ) {
+    //if ( enables & AF_ENABLED ) {
+    if ( 1 ) {
 	/* read and clamp (0.0 to 1.0) adaptive feed HAL pin */
 	tmp = *emcmot_hal_data->adaptive_feed;
 	if ( tmp > 1.0 ) {
 	    tmp = 1.0;
-	} else if ( tmp < 0.0 ) {
+	} else if ( tmp < 0.01 ) {
 	    tmp = 0.0;
 	}
 	scale *= tmp;

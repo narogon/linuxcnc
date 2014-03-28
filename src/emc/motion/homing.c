@@ -592,7 +592,7 @@ void do_homing(void)
 		   switch position as accurately as possible.  It sets the
 		   current joint position to 'home_offset', which is the
 		   location of the home switch in joint coordinates. */
-        if (joint->home_pause_timer < (1 * servo_freq)) {
+        if (joint->home_pause_timer < (0.5 * servo_freq)) {
 		    /* no, update timer and wait some more */
 		    joint->home_pause_timer++;
 		    break;

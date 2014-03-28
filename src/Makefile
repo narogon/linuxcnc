@@ -807,6 +807,7 @@ lcec-objs :=                             \
     hal/drivers/ethercat/lcec_el40x2.o   \
     hal/drivers/ethercat/lcec_el41x2.o   \
     hal/drivers/ethercat/lcec_el5151.o   \
+    hal/drivers/ethercat/lcec_el5101.o   \
     hal/drivers/ethercat/lcec_el5152.o   \
     hal/drivers/ethercat/lcec_el7342.o   \
     hal/drivers/ethercat/lcec_el95xx.o   \
