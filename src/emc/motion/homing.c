@@ -280,9 +280,16 @@ void do_homing(void)
 		// unlock is now complete.
 		if (joint->home_search_vel == 0.0) {
 		    if (joint->home_latch_vel == 0.0) {
-			/* both vels == 0 means home at current position */
+			/* both vels == 0 means home at current position no move! */
 			joint->home_state = HOME_SET_SWITCH_POSITION;
 			immediate_state = 1;
+			} else if (joint->home_latch_vel == 9.9) {
+            /* joint moves via external control*/
+			    joint->home_state = HOME_INITIAL_SEARCH_WAIT;
+			    immediate_state = 1;
+            } else if (joint->home_latch_vel == 6.6) {
+            /* joint did not need to be homed --> absolut position feedback*/
+                joint->home_state = HOME_LOCK;
 		    } else if (joint->home_flags & HOME_USE_INDEX) {
 			/* home using index pulse only */
 			joint->home_state = HOME_INDEX_ONLY_START;
@@ -592,7 +599,7 @@ void do_homing(void)
 		   switch position as accurately as possible.  It sets the
 		   current joint position to 'home_offset', which is the
 		   location of the home switch in joint coordinates. */
-        if (joint->home_pause_timer < (0.5 * servo_freq)) {
+        if (joint->home_pause_timer < (1 * servo_freq)) {
 		    /* no, update timer and wait some more */
 		    joint->home_pause_timer++;
 		    break;
@@ -601,10 +608,10 @@ void do_homing(void)
 		/* set the current position to 'home_offset' */
 		/* this moves the internal position but does not affect the
 		   motor position */
+        joint->motor_offset -= (joint->home_offset - joint->pos_fb);
 		joint->pos_cmd = joint->home_offset;
 		joint->pos_fb = joint->home_offset;
 		joint->free_pos_cmd = joint->home_offset;
-		joint->motor_offset = -joint->home_offset;
 		/* next state */
 		joint->home_state = HOME_LOCK;
 		immediate_state = 1;
