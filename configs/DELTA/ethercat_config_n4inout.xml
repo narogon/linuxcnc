@@ -1,0 +1,262 @@
+<!--#
+#  Copyright (C) 2015 Nacho Rosales <narogon@hotmail.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#-->
+
+
+<master idx="0" appTimePeriod="1000000" refClockSyncCycles="100">
+	<slave idx="0" type="generic" vid="00000083" pid="00000006" configPdos="true">
+		<sdoConfig idx="1C12" subIdx="1">
+			<sdoDataRaw data="02 17"/>
+		</sdoConfig>
+		<sdoConfig idx="1C13" subIdx="1">
+			<sdoDataRaw data="02 1B"/>
+		</sdoConfig>
+		<sdoConfig idx="6060" subIdx="0">
+			<sdoDataRaw data="06"/>
+		</sdoConfig>
+		<sdoConfig idx="4104" subIdx="0">
+			<sdoDataRaw data="D7 BE 08 00"/>	
+		</sdoConfig>
+		<sdoConfig idx="607A" subIdx="0">
+			<sdoDataRaw data="D7 BE 08 00"/>
+		</sdoConfig>
+		<sdoConfig idx="6098" subIdx="0">
+			<sdoDataRaw data="23"/>
+		</sdoConfig>
+		<syncManager idx="0" dir="out">
+		</syncManager>
+		<syncManager idx="1" dir="in">
+		</syncManager>
+		<syncManager idx="2" dir="out">
+			<pdo idx="1702">
+				<pdoEntry idx="6040" subIdx="00" bitLen="16" halPin="drivecontrol" halType="bit"/>
+				<pdoEntry idx="607A" subIdx="00" bitLen="32" halPin="poscommand" halType="S32"/>
+				<pdoEntry idx="60FF" subIdx="00" bitLen="32" halPin="velcommand" halType="S32"/>
+				<pdoEntry idx="6071" subIdx="00" bitLen="16" halPin="torcommand" halType="S32"/>
+				<pdoEntry idx="6060" subIdx="00" bitLen="8"  halPin="modecommand" halType="S32"/>
+				<pdoEntry idx="60B8" subIdx="00" bitLen="16" halPin="touchprobefunction" halType="bit"/>
+				<pdoEntry idx="607F" subIdx="01" bitLen="32" halPin="Maxprofvel" halType="S32"/>				
+			</pdo>
+		</syncManager>
+		<syncManager idx="3" dir="in">
+			<pdo idx="1B02">
+				<pdoEntry idx="603F" subIdx="00" bitLen="16" halPin="errcode" halType="bit"/>
+				<pdoEntry idx="6041" subIdx="00" bitLen="16" halPin="drivestatus" halType="bit"/>
+				<pdoEntry idx="6064" subIdx="00" bitLen="32" halPin="pos" halType="S32"/>
+				<pdoEntry idx="6077" subIdx="00" bitLen="16" halPin="torque" halType="S32"/>
+				<pdoEntry idx="6061" subIdx="00" bitLen="8"  halPin="mode" halType="S32"/>
+				<pdoEntry idx="60B9" subIdx="00" bitLen="16" halPin="touchprobestatus" halType="bit"/>
+				<pdoEntry idx="60BA" subIdx="00" bitLen="32" halPin="touchpos1" halType="S32"/>
+				<pdoEntry idx="60BC" subIdx="00" bitLen="32" halPin="touchpos2" halType="S32"/>
+				<pdoEntry idx="60FD" subIdx="00" bitLen="32" halPin="diginputs" halType="bit"/>
+			</pdo>
+		</syncManager>
+		<dcConf assignActivate="300" sync0Cycle="*1" sync0Shift="250000"/>
+		<watchdog divider="2498" intervals="1000"/>
+	</slave>
+	<slave idx="1" type="generic" vid="00000083" pid="00000006" configPdos="true">
+		<sdoConfig idx="1C12" subIdx="1">
+			<sdoDataRaw data="01 17"/>
+		</sdoConfig>
+		<sdoConfig idx="1C13" subIdx="1">
+			<sdoDataRaw data="01 1B"/>
+		</sdoConfig>
+		<sdoConfig idx="6060" subIdx="0">
+			<sdoDataRaw data="06"/>
+		</sdoConfig>
+		<sdoConfig idx="4104" subIdx="0">
+			<sdoDataRaw data="D7 BE 08 00"/>	
+		</sdoConfig>
+		<sdoConfig idx="607A" subIdx="0">
+			<sdoDataRaw data="D7 BE 08 00"/>
+		</sdoConfig>
+		<sdoConfig idx="6098" subIdx="0">
+			<sdoDataRaw data="23"/>
+		</sdoConfig>
+		<syncManager idx="0" dir="out">
+		</syncManager>
+		<syncManager idx="1" dir="in">
+		</syncManager>
+		<syncManager idx="2" dir="out">
+			<pdo idx="1702">
+				<pdoEntry idx="6040" subIdx="00" bitLen="16" halPin="drivecontrol" halType="bit"/>
+				<pdoEntry idx="607A" subIdx="00" bitLen="32" halPin="poscommand" halType="S32"/>
+				<pdoEntry idx="60FF" subIdx="00" bitLen="32" halPin="velcommand" halType="S32"/>
+				<pdoEntry idx="6071" subIdx="00" bitLen="16" halPin="torcommand" halType="S32"/>
+				<pdoEntry idx="6060" subIdx="00" bitLen="8"  halPin="modecommand" halType="S32"/>
+				<pdoEntry idx="60B8" subIdx="00" bitLen="16" halPin="touchprobefunction" halType="bit"/>
+				<pdoEntry idx="607F" subIdx="01" bitLen="32" halPin="Maxprofvel" halType="S32"/>				
+			</pdo>
+		</syncManager>
+		<syncManager idx="3" dir="in">
+			<pdo idx="1B02">
+				<pdoEntry idx="603F" subIdx="00" bitLen="16" halPin="errcode" halType="bit"/>
+				<pdoEntry idx="6041" subIdx="00" bitLen="16" halPin="drivestatus" halType="bit"/>
+				<pdoEntry idx="6064" subIdx="00" bitLen="32" halPin="pos" halType="S32"/>
+				<pdoEntry idx="6077" subIdx="00" bitLen="16" halPin="torque" halType="S32"/>
+				<pdoEntry idx="6061" subIdx="00" bitLen="8"  halPin="mode" halType="S32"/>
+				<pdoEntry idx="60B9" subIdx="00" bitLen="16" halPin="touchprobestatus" halType="bit"/>
+				<pdoEntry idx="60BA" subIdx="00" bitLen="32" halPin="touchpos1" halType="S32"/>
+				<pdoEntry idx="60BC" subIdx="00" bitLen="32" halPin="touchpos2" halType="S32"/>
+				<pdoEntry idx="60FD" subIdx="00" bitLen="32" halPin="diginputs" halType="bit"/>
+			</pdo>
+		</syncManager>
+		<dcConf assignActivate="300" sync0Cycle="*1" sync0Shift="250000"/>
+		<watchdog divider="2498" intervals="1000"/>
+	</slave>
+	<slave idx="2" type="generic" vid="00000083" pid="00000006" configPdos="true">
+		<sdoConfig idx="1C12" subIdx="1">
+			<sdoDataRaw data="01 17"/>
+		</sdoConfig>
+		<sdoConfig idx="1C13" subIdx="1">
+			<sdoDataRaw data="01 1B"/>
+		</sdoConfig>
+		<sdoConfig idx="6060" subIdx="0">
+			<sdoDataRaw data="06"/>
+		</sdoConfig>
+		<sdoConfig idx="4104" subIdx="0">
+			<sdoDataRaw data="D7 BE 08 00"/>	
+		</sdoConfig>
+		<sdoConfig idx="607A" subIdx="0">
+			<sdoDataRaw data="D7 BE 08 00"/>
+		</sdoConfig>
+		<sdoConfig idx="6098" subIdx="0">
+			<sdoDataRaw data="23"/>
+		</sdoConfig>
+		<syncManager idx="0" dir="out">
+		</syncManager>
+		<syncManager idx="1" dir="in">
+		</syncManager>
+		<syncManager idx="2" dir="out">
+			<pdo idx="1702">
+				<pdoEntry idx="6040" subIdx="00" bitLen="16" halPin="drivecontrol" halType="bit"/>
+				<pdoEntry idx="607A" subIdx="00" bitLen="32" halPin="poscommand" halType="S32"/>
+				<pdoEntry idx="60FF" subIdx="00" bitLen="32" halPin="velcommand" halType="S32"/>
+				<pdoEntry idx="6071" subIdx="00" bitLen="16" halPin="torcommand" halType="S32"/>
+				<pdoEntry idx="6060" subIdx="00" bitLen="8"  halPin="modecommand" halType="S32"/>
+				<pdoEntry idx="60B8" subIdx="00" bitLen="16" halPin="touchprobefunction" halType="bit"/>
+				<pdoEntry idx="607F" subIdx="01" bitLen="32" halPin="Maxprofvel" halType="S32"/>				
+			</pdo>
+		</syncManager>
+		<syncManager idx="3" dir="in">
+			<pdo idx="1B02">
+				<pdoEntry idx="603F" subIdx="00" bitLen="16" halPin="errcode" halType="bit"/>
+				<pdoEntry idx="6041" subIdx="00" bitLen="16" halPin="drivestatus" halType="bit"/>
+				<pdoEntry idx="6064" subIdx="00" bitLen="32" halPin="pos" halType="S32"/>
+				<pdoEntry idx="6077" subIdx="00" bitLen="16" halPin="torque" halType="S32"/>
+				<pdoEntry idx="6061" subIdx="00" bitLen="8"  halPin="mode" halType="S32"/>
+				<pdoEntry idx="60B9" subIdx="00" bitLen="16" halPin="touchprobestatus" halType="bit"/>
+				<pdoEntry idx="60BA" subIdx="00" bitLen="32" halPin="touchpos1" halType="S32"/>
+				<pdoEntry idx="60BC" subIdx="00" bitLen="32" halPin="touchpos2" halType="S32"/>
+				<pdoEntry idx="60FD" subIdx="00" bitLen="32" halPin="diginputs" halType="bit"/>
+			</pdo>
+		</syncManager>
+		<dcConf assignActivate="300" sync0Cycle="*1" sync0Shift="250000"/>
+		<watchdog divider="2498" intervals="1000"/>
+	</slave>
+	<slave idx="3" type="generic" vid="00000083" pid="00000006" configPdos="true">
+		<sdoConfig idx="1C12" subIdx="1">
+			<sdoDataRaw data="01 17"/>
+		</sdoConfig>
+		<sdoConfig idx="1C13" subIdx="1">
+			<sdoDataRaw data="01 1B"/>
+		</sdoConfig>
+		<sdoConfig idx="6060" subIdx="0">
+			<sdoDataRaw data="08"/>
+		</sdoConfig>
+		<sdoConfig idx="60FE" subIdx="2">
+			<sdoDataRaw data="00 00 03 00"/>
+		</sdoConfig>
+		<syncManager idx="0" dir="out">
+		</syncManager>
+		<syncManager idx="1" dir="in">
+		</syncManager>
+		<syncManager idx="2" dir="out">
+			<pdo idx="1701">
+				<pdoEntry idx="6040" subIdx="00" bitLen="16" halPin="drivecontrol" halType="bit"/>
+				<pdoEntry idx="607A" subIdx="00" bitLen="32" halPin="poscommand" halType="S32"/>
+				<pdoEntry idx="60B8" subIdx="00" bitLen="16" halPin="touchprobefunction" halType="bit"/>
+				<pdoEntry idx="60FE" subIdx="01" bitLen="32" halPin="digoutputs" halType="bit"/>
+			</pdo>
+		</syncManager>
+		<syncManager idx="3" dir="in">
+			<pdo idx="1B01">
+				<pdoEntry idx="603F" subIdx="00" bitLen="16" halPin="errcode" halType="bit"/>
+				<pdoEntry idx="6041" subIdx="00" bitLen="16" halPin="drivestatus" halType="bit"/>
+				<pdoEntry idx="6064" subIdx="00" bitLen="32" halPin="pos" halType="S32"/>
+				<pdoEntry idx="6077" subIdx="00" bitLen="16" halPin="torque" halType="S32"/>
+				<pdoEntry idx="60F4" subIdx="00" bitLen="32" halPin="follerror" halType="S32"/>
+				<pdoEntry idx="60B9" subIdx="00" bitLen="16" halPin="touchprobestatus" halType="bit"/>
+				<pdoEntry idx="60BA" subIdx="00" bitLen="32" halPin="touchpos1" halType="S32"/>
+				<pdoEntry idx="60BC" subIdx="00" bitLen="32" halPin="touchpos2" halType="S32"/>
+				<pdoEntry idx="60FD" subIdx="00" bitLen="32" halPin="diginputs" halType="bit"/>
+			</pdo>
+		</syncManager>
+		<dcConf assignActivate="300" sync0Cycle="*1" sync0Shift="250000"/>
+		<watchdog divider="2498" intervals="1000"/>
+	</slave>
+	<slave idx="4" type="EK1100" />
+	<slave idx="5" type="generic" vid="00000002" pid="03F63052" configPdos="true">
+		
+		<syncManager idx="0" dir="in">
+			<pdo idx="1A00">
+				<pdoEntry idx="3101" subIdx="01" bitLen="1" halPin="entrada1" halType="bit"/>
+			</pdo>
+			<pdo idx="1A01">
+				<pdoEntry idx="3101" subIdx="02" bitLen="1" halPin="entrada2" halType="bit"/>
+			</pdo>
+			<pdo idx="1A02">
+				<pdoEntry idx="3101" subIdx="03" bitLen="1" halPin="entrada3" halType="bit"/>
+			</pdo>
+			<pdo idx="1A03">
+				<pdoEntry idx="3101" subIdx="04" bitLen="1" halPin="entrada4" halType="bit"/>
+			</pdo>
+		</syncManager>
+	</slave>
+	<slave idx="6" type="generic" vid="00000002" pid="07D43052" configPdos="true">
+		
+		<syncManager idx="0" dir="out">
+			<pdo idx="1600">
+				<pdoEntry idx="3101" subIdx="01" bitLen="1" halPin="salida1" halType="bit"/>
+			</pdo>
+			<pdo idx="1601">
+				<pdoEntry idx="3101" subIdx="02" bitLen="1" halPin="salida2" halType="bit"/>
+			</pdo>
+			<pdo idx="1602">
+				<pdoEntry idx="3101" subIdx="03" bitLen="1" halPin="salida3" halType="bit"/>
+			</pdo>
+			<pdo idx="1603">
+				<pdoEntry idx="3101" subIdx="04" bitLen="1" halPin="salida4" halType="bit"/>
+			</pdo>
+		</syncManager>
+	</slave>
+	<slave idx="7" type="generic" vid="00000002" pid="0C1E3052" configPdos="true">
+		<syncManager idx="0" dir="out"/>
+		<syncManager idx="1" dir="in"/>
+		<syncManager idx="3" dir="in">
+			<pdo idx="1A00">
+				<pdoEntry idx="3101" subIdx="01" bitLen="8" halPin="status.1" halType="bit"/>
+				<pdoEntry idx="3101" subIdx="02" bitLen="16" halPin="value.1" halType="special32" scale="3276.7"/>
+			</pdo>
+			<pdo idx="1A01">
+				<pdoEntry idx="3102" subIdx="01" bitLen="8" halPin="status.2" halType="bit"/>
+				<pdoEntry idx="3102" subIdx="02" bitLen="16" halPin="value.2" halType="special32" scale="3276.7"/>
+			</pdo>
+		</syncManager>
+	</slave>
+	
+</master>

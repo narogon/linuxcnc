@@ -1,0 +1,101 @@
+#
+#  Copyright (C) 2015 Nacho Rosales <narogon@hotmail.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+
+loadusr -W pyvcp -c pyvcp vcp.xml
+
+net M1pactscl		     pyvcp.posactual.1
+net M2pactscl			 pyvcp.posactual.2
+net M3pactscl			 pyvcp.posactual.3
+
+net Xposdem				 pyvcp.poscom.1
+net Yposdem				 pyvcp.poscom.2
+net Zposdem				 pyvcp.poscom.3
+
+
+net estado.0.0 estado.0.est-0 => pyvcp.motor1.visestado.0
+net estado.0.1 estado.0.est-1 => pyvcp.motor1.visestado.1
+net estado.0.2 estado.0.est-2 => pyvcp.motor1.visestado.2
+net estado.0.3 estado.0.est-3 => pyvcp.motor1.visestado.3
+net estado.0.4 estado.0.est-4 => pyvcp.motor1.visestado.4
+net estado.0.5 estado.0.est-5 => pyvcp.motor1.visestado.5
+net estado.0.6 estado.0.est-6 => pyvcp.motor1.visestado.6
+
+net estado.1.0 estado.1.est-0 => pyvcp.motor2.visestado.0
+net estado.1.1 estado.1.est-1 => pyvcp.motor2.visestado.1
+net estado.1.2 estado.1.est-2 => pyvcp.motor2.visestado.2
+net estado.1.3 estado.1.est-3 => pyvcp.motor2.visestado.3
+net estado.1.4 estado.1.est-4 => pyvcp.motor2.visestado.4
+net estado.1.5 estado.1.est-5 => pyvcp.motor2.visestado.5
+net estado.1.6 estado.1.est-6 => pyvcp.motor2.visestado.6
+
+net estado.2.0 estado.2.est-0 => pyvcp.motor3.visestado.0
+net estado.2.1 estado.2.est-1 => pyvcp.motor3.visestado.1
+net estado.2.2 estado.2.est-2 => pyvcp.motor3.visestado.2
+net estado.2.3 estado.2.est-3 => pyvcp.motor3.visestado.3
+net estado.2.4 estado.2.est-4 => pyvcp.motor3.visestado.4
+net estado.2.5 estado.2.est-5 => pyvcp.motor3.visestado.5
+net estado.2.6 estado.2.est-6 => pyvcp.motor3.visestado.6
+
+net faultreset pyvcp.faultreset => lcec.0.0.drivecontrol-7 lcec.0.1.drivecontrol-7 lcec.0.2.drivecontrol-7
+
+#net shutdown pyvcp.shutdown => lcec.0.0.drivecontrol-1 lcec.0.0.drivecontrol-2 
+#net shutdown lcec.0.1.drivecontrol-1 lcec.0.1.drivecontrol-2
+#net shutdown lcec.0.2.drivecontrol-1 lcec.0.2.drivecontrol-2  
+#net shutdown notSD.in halui.estop.reset
+#net Nshutdown notSD.out => halui.estop.activate
+
+net Eoperation halui.machine.is-on lcec.0.0.drivecontrol-0 lcec.0.0.drivecontrol-3
+net Eoperation lcec.0.1.drivecontrol-0 lcec.0.1.drivecontrol-3
+net Eoperation lcec.0.2.drivecontrol-0 lcec.0.2.drivecontrol-3
+
+
+net modecommand pyvcp.modecommand-i => lcec.0.0.modecommand lcec.0.1.modecommand lcec.0.2.modecommand
+net mode1 lcec.0.0.mode => pyvcp.mode1
+net mode2 lcec.0.1.mode => pyvcp.mode2
+net mode3 lcec.0.2.mode => pyvcp.mode3
+net home pyvcp.home => lcec.0.0.drivecontrol-4 lcec.0.1.drivecontrol-4 lcec.0.2.drivecontrol-4 halui.home-all
+
+net M1pact pyvcp.posencod.1
+net M2pact pyvcp.posencod.2
+net M3pact pyvcp.posencod.3
+
+net SrelvalveON pyvcp.relvalveON => halui.mdi-command-00
+net SrelvalveOFF pyvcp.relvalveOFF => halui.mdi-command-01
+net SsupvalveON pyvcp.supvalveON => halui.mdi-command-02
+net SsupvalveOFF pyvcp.supvalveOFF => halui.mdi-command-03
+
+net Srelvalve => pyvcp.relvalveST
+net Ssupvalve => pyvcp.supvalveST
+
+net digin0 lcec.0.5.entrada1 => pyvcp.din.0
+net digin1 lcec.0.5.entrada2 => pyvcp.din.1
+net joystickdown => pyvcp.din.2
+net joystickup  => pyvcp.din.3
+
+net digout0 lcec.0.6.salida1 => pyvcp.dout.0
+net digout1 lcec.0.6.salida2 => pyvcp.dout.1
+net digout2 lcec.0.6.salida3 => pyvcp.dout.2
+net digout3 lcec.0.6.salida4 => pyvcp.dout.3
+
+net Sjoystickspeed pyvcp.joystickZspeed => halui.jog-speed
+net SjoystickYsc pyvcp.joystickY
+net SjoystickXsc pyvcp.joystickX
+
+net Sactualizar pyvcp.actualizar => actoffset.actualizar
+                         

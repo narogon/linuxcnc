@@ -1,0 +1,175 @@
+<!--
+#  Copyright (C) 2015 Nacho Rosales <narogon@hotmail.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#-->
+
+
+<?xml version='1.0' encoding='UTF-8'?>
+<pyvcp>
+<vbox>
+	<labelframe text="POSICIONES">
+	<vbox> <!-- Posiciones -->
+		<hbox><label text="posfb"/><label text="poscom"/><label text="pos encoders"/></hbox>
+		<hbox><number halpin="posactual.1" format="3.5f"/><number halpin="poscom.1" format="3.5f"/><s32 halpin="posencod.1"/></hbox>
+		<hbox><number halpin="posactual.2" format="3.5f"/><number halpin="poscom.2" format="3.5f"/><s32 halpin="posencod.2"/></hbox>
+		<hbox><number halpin="posactual.3" format="3.5f"/><number halpin="poscom.3" format="3.5f"/><s32 halpin="posencod.3"/></hbox>
+	</vbox>
+	</labelframe>
+	
+	<labelframe text="ESTADOS">
+	<hbox> <!-- Estados -->
+		<vbox>
+			<label><anchor>"w"</anchor><text>"Not ready to switch on:  "</text><font>("Arial",10)</font></label>
+			<label><anchor>"w"</anchor><text>"Switch on disabled:"</text><font>("Arial",10)</font></label>
+			<label><anchor>"w"</anchor><text>"Ready to switch on:"</text><font>("Arial",10)</font></label>
+			<label><anchor>"w"</anchor><text>"Switched on:"</text><font>("Arial",10)</font></label>
+			<label><anchor>"w"</anchor><text>"Operation enabled:"</text><font>("Arial",10)</font></label>
+			<label><anchor>"w"</anchor><text>"Fault reaction active:"</text><font>("Arial",10)</font></label>
+			<label><anchor>"w"</anchor><text>"Fault:"</text><font>("Arial",10)</font></label>
+		</vbox>
+		<vbox>
+			<led halpin="motor1.visestado.0" size="10"/>
+			<led halpin="motor1.visestado.1" size="10"/>
+			<led halpin="motor1.visestado.2" size="10"/>
+			<led halpin="motor1.visestado.3" size="10"/>
+			<led halpin="motor1.visestado.4" size="10"/>
+			<led halpin="motor1.visestado.5" size="10"/>
+			<led halpin="motor1.visestado.6" size="10"/>
+		</vbox>
+		<vbox>
+			<led halpin="motor2.visestado.0" size="10"/>
+			<led halpin="motor2.visestado.1" size="10"/>
+			<led halpin="motor2.visestado.2" size="10"/>
+			<led halpin="motor2.visestado.3" size="10"/>
+			<led halpin="motor2.visestado.4" size="10"/>
+			<led halpin="motor2.visestado.5" size="10"/>
+			<led halpin="motor2.visestado.6" size="10"/>
+		</vbox>
+		<vbox>
+			<led halpin="motor3.visestado.0" size="10"/>
+			<led halpin="motor3.visestado.1" size="10"/>
+			<led halpin="motor3.visestado.2" size="10"/>
+			<led halpin="motor3.visestado.3" size="10"/>
+			<led halpin="motor3.visestado.4" size="10"/>
+			<led halpin="motor3.visestado.5" size="10"/>
+			<led halpin="motor3.visestado.6" size="10"/>
+		</vbox>
+		<vbox>
+			<checkbutton halpin="faultreset" text="Fault reset"/>
+			<checkbutton halpin="shutdown" text="Shutdown"/>
+			<checkbutton halpin="Eoperation" text="Switch on + EO"/>
+		</vbox>
+		
+	</hbox>
+	</labelframe>
+	
+	<labelframe text="MODOS Y HOMING">
+	<vbox><!-- MODOS y HOMING -->
+		<scale>
+			<width>"20"</width>
+			<halpin>"modecommand"</halpin>
+			<resolution>2</resolution>
+			<orient>HORIZONTAL</orient>
+			<initval>6</initval>
+			<min_>6</min_>
+			<max_>8</max_>
+		</scale>
+		<hbox><s32 halpin="mode1"/><s32 halpin="mode2"/><s32 halpin="mode3"/></hbox>
+		<checkbutton halpin="home" text="ct4 homing"/>
+	</vbox>
+	</labelframe>
+	
+	<labelframe text="Valvula de vacio">
+		<vbox>
+			<hbox>
+				<button halpin="relvalveON" text="Release valve on"/>
+				<button halpin="relvalveOFF" text="Release valve off"/>
+				<led halpin="relvalveST"/>
+			</hbox>
+			<hbox>
+				<button halpin="supvalveON" text="Supply valve on"/>
+				<button halpin="supvalveOFF" text="Supply valve off"/>
+				<led halpin="supvalveST"/>
+			</hbox>
+			<hbox><led halpin="absorcion"/><label text="Absorcion"/></hbox>
+		</vbox>
+	</labelframe>
+	<labelframe text="ENTRADAS SALIDAS">
+	<vbox>
+		<hbox>
+			<label text="0"/>
+			<label text="1"/>
+			<label text="2"/>
+			<label text="3"/>
+		</hbox>
+		<hbox>
+			<led halpin="din.0"/>
+			<led halpin="din.1"/>
+			<led halpin="din.2"/>
+			<led halpin="din.3"/>
+		</hbox>
+		<hbox>
+			<checkbutton halpin="dout.0"/>
+			<checkbutton halpin="dout.1"/>
+			<checkbutton halpin="dout.2"/>
+			<checkbutton halpin="dout.3"/>
+		</hbox>
+	</vbox>
+	</labelframe>
+	<labelframe text="JOYSTICK">
+		<spinbox>
+			<min_>0</min_>
+			<max_>2000</max_>
+			<initval>0</initval>
+			<resolution>50</resolution>
+			<format>"3f"</format>
+			<halpin>"joystickZspeed"</halpin>
+		</spinbox>
+			<checkbutton halpin="actualizar"/>
+		<hbox>
+			<meter>
+				<halpin>"joystickY"</halpin>
+				<text>"JOYSTICK"</text>
+				<subtext>"EJE Y"</subtext>
+				<size>150</size>
+				<min_>-1</min_>
+				<max_>1</max_>
+				<majorscale>0.2</majorscale>
+				<minorscale>0.04</minorscale>
+				<region1>(-1,-0.02,"green")</region1>
+				<region2>(-0.02,0.02,"red")</region2>
+				<region3>(0.02,1,"green")</region3>
+			</meter>
+			<meter>
+				<halpin>"joystickX"</halpin>
+				<text>"JOYSTICK"</text>
+				<subtext>"EJE X"</subtext>
+				<size>150</size>
+				<min_>-1</min_>
+				<max_>1</max_>
+				<majorscale>0.2</majorscale>
+				<minorscale>0.04</minorscale>
+				<region1>(-1,-0.02,"green")</region1>
+				<region2>(-0.02,0.02,"red")</region2>
+				<region3>(0.02,1,"green")</region3>
+			</meter>
+		</hbox>
+	</labelframe>
+
+</vbox>
+
+</pyvcp>	
+

@@ -1,0 +1,45 @@
+#
+#  Copyright (C) 2015 Nacho Rosales <narogon@hotmail.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+
+# load funcion codificacion estado
+loadrt estado count=3
+
+net sword.0.0 lcec.0.0.drivestatus-0 => estado.0.sword-0
+net sword.0.1 lcec.0.0.drivestatus-1 => estado.0.sword-1
+net sword.0.2 lcec.0.0.drivestatus-2 => estado.0.sword-2
+net sword.0.3 lcec.0.0.drivestatus-3 => estado.0.sword-3
+net sword.0.4 lcec.0.0.drivestatus-4 => estado.0.sword-4
+net sword.0.5 lcec.0.0.drivestatus-5 => estado.0.sword-5
+
+net sword.1.0 lcec.0.1.drivestatus-0 => estado.1.sword-0
+net sword.1.1 lcec.0.1.drivestatus-1 => estado.1.sword-1
+net sword.1.2 lcec.0.1.drivestatus-2 => estado.1.sword-2
+net sword.1.3 lcec.0.1.drivestatus-3 => estado.1.sword-3
+net sword.1.4 lcec.0.1.drivestatus-4 => estado.1.sword-4
+net sword.1.5 lcec.0.1.drivestatus-5 => estado.1.sword-5
+
+net sword.2.0 lcec.0.2.drivestatus-0 => estado.2.sword-0
+net sword.2.1 lcec.0.2.drivestatus-1 => estado.2.sword-1
+net sword.2.2 lcec.0.2.drivestatus-2 => estado.2.sword-2
+net sword.2.3 lcec.0.2.drivestatus-3 => estado.2.sword-3
+net sword.2.4 lcec.0.2.drivestatus-4 => estado.2.sword-4
+net sword.2.5 lcec.0.2.drivestatus-5 => estado.2.sword-5
+
+addf estado.0 servo-thread
+addf estado.1 servo-thread
+addf estado.2 servo-thread

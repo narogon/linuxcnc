@@ -1,0 +1,137 @@
+#  Copyright (C) 2015 Nacho Rosales <narogon@hotmail.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+
+# Archivo de configuración HAL principal 
+
+
+# CARGA DE COMPONENTES 
+# ------------------------------------------------------
+
+loadusr -W lcec_conf [ETHERCAT]RUTA_CONFIG
+loadrt lcec
+# Cinematica directa e inversa delta 
+loadrt deltakins
+# Controlador de movimientos. Crea a su vez el hilo de ejecución en tiempo real. 
+loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
+# Componentes de escalado de los valores de posicion 
+loadrt scaleG5in
+loadrt scaleG5out
+# Componentes logicos NOT
+loadrt not names=notEO,notSD,notESTOP
+# Componentes escala y actualizador offset JOYSTICK
+loadrt scalejoystick names=scaleJOYX,scaleJOYY
+loadrt actoffset names=actoffset
+
+# EJECUCION DE FUNCIONES
+# ------------------------------------------------------
+
+addf lcec.read-all servo-thread
+addf motion-command-handler servo-thread
+addf motion-controller servo-thread
+addf scaleG5in.0 servo-thread
+addf scaleG5out.0 servo-thread
+addf notSD servo-thread
+addf notEO servo-thread
+addf notESTOP servo-thread
+addf actoffset servo-thread
+addf scaleJOYX servo-thread
+addf scaleJOYY servo-thread
+addf lcec.write-all servo-thread
+
+# SEÑALES
+# ------------------------------------------------------
+
+# Posicion
+net M1pact  lcec.0.0.pos => scaleG5in.0.m1s32 
+net M2pact	lcec.0.1.pos => scaleG5in.0.m2s32 
+net M3pact	lcec.0.2.pos => scaleG5in.0.m3s32
+
+net M1pactscl   scaleG5in.0.m1fl => axis.0.motor-pos-fb
+net M2pactscl   scaleG5in.0.m2fl => axis.1.motor-pos-fb
+net M3pactscl   scaleG5in.0.m3fl => axis.2.motor-pos-fb
+
+net Xposdem		axis.0.motor-pos-cmd => scaleG5out.0.m1fl  
+net Yposdem		axis.1.motor-pos-cmd => scaleG5out.0.m2fl  
+net Zposdem		axis.2.motor-pos-cmd => scaleG5out.0.m3fl
+
+net Xposdems32 scaleG5out.0.m1s32 => lcec.0.0.poscommand
+net Yposdems32 scaleG5out.0.m2s32 => lcec.0.1.poscommand
+net Zposdems32 scaleG5out.0.m3s32 => lcec.0.2.poscommand
+
+# Seta de emergencia
+net estop-loopN lcec.0.3.diginputs-25 => notESTOP.in
+net estop-loop notESTOP.out => iocontrol.0.emc-enable-in
+
+# Herramienta (Siempre en estado preparada dado que no hay intercambiador de herramientas)
+net tool-prep-loop iocontrol.0.tool-prepare => iocontrol.0.tool-prepared
+net tool-change-loop iocontrol.0.tool-change => iocontrol.0.tool-changed
+
+# Valvula de vacio
+net Srelvalve motion.digital-out-00 => lcec.0.3.digoutputs-16
+net Ssupvalve motion.digital-out-01 => lcec.0.3.digoutputs-17
+
+# Señales del joystick
+
+#Eje Z digital 
+net joystickdown lcec.0.5.entrada3 => halui.jog.2.minus
+net joystickup   lcec.0.5.entrada4 => halui.jog.2.plus
+
+#Ejes x e y - Palanca de mandos entrada analogica
+net SjoystickY  lcec.0.7.value.1 => scaleJOYY.in actoffset.nuevo2
+net SjoystickX  lcec.0.7.value.2 => scaleJOYX.in actoffset.nuevo1
+
+net SjoystickYsc scaleJOYY.out => halui.jog.1.analog 
+net SjoystickXsc scaleJOYX.out => halui.jog.0.analog 
+
+net Sactoffset1  actoffset.valor1 => actoffset.antiguo1 scaleJOYX.offset
+net Sactoffset2  actoffset.valor2 => actoffset.antiguo2 scaleJOYY.offset
+
+# ASIGNACION VALORES INICIALES
+# ------------------------------------------------------
+
+# Relaciones de transmision 
+setp scaleG5out.0.rel1 [RTRANS]R1
+setp scaleG5out.0.rel2 [RTRANS]R2 
+setp scaleG5out.0.rel3 [RTRANS]R3 
+setp scaleG5in.0.rel1 [RTRANS]R1 
+setp scaleG5in.0.rel2 [RTRANS]R2
+setp scaleG5in.0.rel3 [RTRANS]R3
+
+# Parametros geometricos para calculo de la cinematica
+setp deltakins.f [GEOM]F
+setp deltakins.e [GEOM]E
+setp deltakins.rf [GEOM]RF
+setp deltakins.re [GEOM]RE
+
+# Valores para que el estado inicial sea shutdown
+setp lcec.0.0.drivecontrol-1 TRUE
+setp lcec.0.0.drivecontrol-2 TRUE
+setp lcec.0.1.drivecontrol-1 TRUE
+setp lcec.0.1.drivecontrol-2 TRUE
+setp lcec.0.2.drivecontrol-1 TRUE
+setp lcec.0.2.drivecontrol-2 TRUE
+
+# Parametros escala y offset palanca de mandos
+setp scaleJOYY.banda [JOYSTICK]BANDAy 
+setp scaleJOYX.banda [JOYSTICK]BANDAx
+
+setp actoffset.inicio1 [JOYSTICK]OFFSETx
+setp actoffset.inicio2 [JOYSTICK]OFFSETy
+
+setp halui.jog-deadband [JOYSTICK]BANDAMUERTA
+setp scaleJOYX.deadband [JOYSTICK]BANDAMUERTA
+setp scaleJOYY.deadband [JOYSTICK]BANDAMUERTA
